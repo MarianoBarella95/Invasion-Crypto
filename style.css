@@ -1,0 +1,189 @@
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300..700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Fira Code", serif;
+    text-decoration: none;
+}
+
+a {
+    color: #000000;
+}
+
+
+body {
+    display: grid;
+    min-width: 100vw;
+    min-height: 100vh;
+    grid-template-columns: 3fr 1fr;
+    grid-template-rows: .3fr 3fr 2fr .3fr;
+    background-color: gray;
+}
+
+/* ESTILOS DEL GRID PRINCIPAL */
+
+.header {
+    grid-column: 1 / 3;
+    grid-row: 1 / 2;
+    background-color: #F2F2F2;
+    border: 1px solid black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.hero {
+    grid-column: 1 / 2;
+    grid-row: 2 / 3;
+    background-color: #F2F2F2;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: left;
+    padding: 1rem;
+    border: 1px solid black;
+
+}
+
+.links {
+    grid-column: 1 / 2;
+    grid-row: 3 / 5;
+    background-color: #F2F2F2;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    justify-content: center;
+    align-items: left;
+    padding: 1rem;
+    border: 1px solid black;
+
+}
+
+.banner {
+    grid-column: 2 / 3;
+    grid-row: 2 / 4;
+    background-color: #9933CC;
+    border: 1px solid black;
+    /* AJUSTES PARA ANIMATION */
+    position: relative;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+    /* Distribución en columnas */
+    grid-gap: 10px;
+    /* Espacio entre elementos */
+    justify-items: center;
+    /* Centra horizontalmente cada logo */
+    align-items: center;
+    /* Centra verticalmente cada logo */
+}
+
+.logo {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    transition: transform 0.3s ease-in-out;
+}
+
+.footer {
+    grid-column: 2 / 4;
+    grid-row: 4 / 5;
+    background-color: #F2F2F2;
+    border: 1px solid black;
+}
+
+/* ESTILO DEL HEADER */
+
+.logo-header-container {
+    height: 3rem;
+    width: 3rem;
+    background-image: url(img/iso_violeta.png);
+    background-position: center;
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+/* ESTILO DEL HERO */
+
+.title-hero-container {
+    width: 300px;
+    height: 150px;
+    background-image: url(img/hero_LOGO1_violeta.png);
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center;
+}
+
+
+.hero-p {
+    font-size: 1.5rem;
+}
+
+/* ESTILO DE LOS LINKS DE NAVEGACIÓN */
+
+.nav-link {
+    font-size: 1.75rem;
+    text-decoration: none;
+    /* background-color: blue; */
+    border: .5px solid black;
+    width: 400px;
+    padding: .2rem;
+    color: black;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+.nav-link:hover {
+    color: #9933cc;
+    border: #9933CC solid 1px;
+    transform: translateX(4px);
+    transition: .5s ease-in-out;
+}
+
+.nav-link-img {
+    width: 2rem;
+}
+
+.nav-link-img-2 {
+    display: none;   
+    width: 2rem; 
+}
+.nav-link:hover .nav-link-img {
+    display: none;
+}
+
+
+.nav-link:hover .nav-link-img-2 {
+    display: flex;
+}
+
+/* ESTILO DE LOS ENLACES EXTERNOS */
+
+.links-list {
+    width: 100%;
+    height: 100%;
+    list-style-type: none;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 2fr;
+}
+
+.links-item {
+    width: 100%;
+    height: 100%;
+    border: 1px solid black;
+    text-align: center;
+}
+
+.links-a {
+    width: 100%;
+    display: block;
+}
+
+.links-item:hover {
+    background-color: #dec6e0;
+}
