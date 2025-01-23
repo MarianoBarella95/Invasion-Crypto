@@ -6,6 +6,15 @@
 
     .header {
         justify-content: center;
+        flex-grow: 1;
+    }
+
+    .hero {
+        flex-grow: 2;
+    }
+
+    .footer {
+        flex-grow: 1;
     }
 
     .banner {
