@@ -6,21 +6,21 @@
 
     .header {
         justify-content: center;
-        flex-grow: 1;
+        height: 5rem;
     }
 
     .hero {
-        flex-grow: 2;
+        min-height: 60vh;
     }
 
     .footer {
-        flex-grow: 1;
+        min-height: 1.5rem;
     }
 
     .banner {
         display: none;
     }
-    
+
     .banner-secondary {
         display: none;
     }
@@ -28,7 +28,7 @@
 }
 
 @media (max-width: 480px) {
-        
+
     .banner-secondary {
         display: none;
     }
@@ -36,7 +36,7 @@
     .title-hero-container {
         width: 250px;
     }
-    
+
     .hero-p {
         font-size: 1rem;
     }
