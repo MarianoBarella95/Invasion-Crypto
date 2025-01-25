@@ -11,3 +11,13 @@ const swiper = new Swiper('.swiper', {
     prevEl: '.swiper-button-prev',
   },
 });
+
+// ESCONDER FOOTER EN MOBILE VERSION
+
+const hero = document.querySelector('.hero');
+const footer = document.querySelector('.footer');
+
+// Usar getComputedStyle para verificar si el footer está oculto
+if (window.getComputedStyle(footer).display === "none") {
+  footer.style.minHeight = "80dvh"; // Usa minHeight en lugar de min-height
+}
