@@ -9,9 +9,9 @@
         max-height: 5rem;
     }
 
-    /* .hero {
-        min-height: 60vh;
-    } */
+    .hero {
+        min-height: 40vh;
+    }
 
     .hero-secondary {
         min-height: 100dvh;
