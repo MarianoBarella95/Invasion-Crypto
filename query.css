@@ -10,7 +10,7 @@
     }
 
     .hero {
-        min-height: max-content;
+        min-height: 60dvh;
     }
 
     .hero-secondary {
