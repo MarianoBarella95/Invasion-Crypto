@@ -9,12 +9,12 @@
         max-height: 5rem;
     }
 
-    .hero {
+    /* .hero {
         min-height: 60vh;
-    }
+    } */
 
     .hero-secondary {
-        min-height: calc(100dvh - 5rem);
+        min-height: 100dvh;
     }
 
     .footer {
