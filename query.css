@@ -6,11 +6,16 @@
 
     .header {
         justify-content: center;
-        max-height: 5rem;
+        height: 5vh;
+        /* max-height: 5rem; */
     }
 
     .hero {
-        min-height: 40dvh;
+        height: 45dvh;
+    }
+
+    .links {
+        height: 45dvh;
     }
 
     .hero-secondary {
@@ -18,7 +23,8 @@
     }
 
     .footer {
-        height: 1.5rem;
+        height: 5vh;
+        /* height: 1.5rem; */
     }
 
     .banner {
