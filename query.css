@@ -43,12 +43,12 @@
         display: none;
     }
 
-    .title-hero-container {
+    /* .title-hero-container {
         width: 250px;
-    }
+    } */
 
     .hero-p {
-        font-size: 1rem;
+        font-size: .75rem;
     }
 
     .nav-link {
