@@ -29,12 +29,12 @@ body {
 /* ESTILOS DEL GRID PRINCIPAL */
 
 .header {
-    grid-column: 1 / 3;
+    grid-column: 1 / 2;
     grid-row: 1 / 2;
     background-color: #F2F2F2;
     border-bottom: 1px solid black;
     display: flex;
-    justify-content: start;
+    justify-content: space-between;
     padding-left: 1rem;
     align-items: center;
     gap: .5rem;
@@ -124,6 +124,30 @@ body {
     background-position: center;
     background-size: contain;
     background-repeat: no-repeat;
+
+}
+
+.btn_cart {
+    grid-column: 2/3;
+    background-color: #F2F2F2;
+    border-bottom: 1px solid black;
+    border-left: 1px solid black;
+    border-top: none;
+    border-right: none;
+    display: grid;
+    place-items: center;
+}
+
+.link_cart {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+}
+
+.btn_cart:hover {
+      background-color: #dec6e0;
 }
 
 /* ESTILO DEL HERO */
