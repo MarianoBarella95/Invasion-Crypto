@@ -316,6 +316,58 @@ body {
     box-shadow: -5px 5px #dec6e0;
 }
 
+/* Overlay del carrito (oculto por defecto) */
+.overlay-carrito {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* Contenedor interno del carrito */
+.carrito-contenido {
+  background: #fff;
+  padding: 24px;
+  /* border-radius: 10px; */
+  text-align: center;
+  max-width: 320px;
+  width: 90%;
+}
+
+.cerrar-btn {
+  margin-top: 12px;
+  background: #ccc;
+  border: none;
+  padding: 6px 12px;
+  cursor: pointer;
+  background-color: #F2F2F2;
+  border: 1px solid #9933CC;
+  color: #9933CC;
+
+}
+
+#btnComprar {
+  margin-top: 12px;
+  background: #ccc;
+  border: none;
+  padding: 6px 12px;
+  cursor: pointer;
+  background-color: #9933CC;
+  color: #F2F2F2;
+}
+
+.overlay-carrito.active {
+  display: flex;
+}
+
+
+
 /* ESTILOS SWIPER JS */
 
 .swiper {
