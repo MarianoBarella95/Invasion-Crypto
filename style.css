@@ -316,6 +316,48 @@ body {
     box-shadow: -5px 5px #dec6e0;
 }
 
+/* ESTILO DEL CART HTML */
+
+.cart-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: start;
+    gap: 2rem;
+}
+
+.product-title {
+    font-size: 2rem;
+}
+
+.product-price {
+    font-size: 1.5rem;
+}
+
+.product-buy {
+    background-color: #9933CC;
+    color: #F2F2F2;
+    border: none;
+}
+
+.product-delete {
+    font-size: 1.75rem;
+    text-decoration: none;
+    border: .5px solid red;
+    width: 400px;
+    padding: .2rem;
+    color: red;
+    text-align: left;
+}
+
+.product-delete:hover {
+    color: red;
+    border: red solid 1px;
+    transform: translate(4px, -4px);
+    transition: .5s ease-in-out;
+    box-shadow: -5px 5px red;
+}
+
 /* Overlay del carrito (oculto por defecto) */
 .overlay-carrito {
   position: fixed;
