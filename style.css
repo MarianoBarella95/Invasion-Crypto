@@ -211,7 +211,7 @@ body {
     height: 100%;
     list-style-type: none;
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 2fr;
+    grid-template-columns: 1fr 1fr 1fr;
 }
 
 .links-item {
