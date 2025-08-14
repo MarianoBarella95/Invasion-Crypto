@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XBL2WEFRD8"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-XBL2WEFRD8');
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="img/logos/Favicon.png" type="image/x-icon">
+    <link rel="apple-touch-icon" sizes="64x64" href="/img/logos/Favicon.png">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="query.css">
+    <meta property="og:image" content="https://invasioncrypto.com/img/open-graph.png">
+    <title>Pago Pendiente - Invasión Crypto</title>
+    <style>
+        .pending-container {
+            max-width: 700px;
+            margin: 50px auto;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        
+        .pending-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        .pending-title {
+            color: #ffc107;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        
+        .pending-subtitle {
+            color: #666;
+            font-size: 1.3em;
+            margin-bottom: 30px;
+        }
+        
+        .pending-details {
+            background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+            padding: 25px;
+            border-radius: 15px;
+            margin: 30px 0;
+            border-left: 5px solid #ffc107;
+            text-align: left;
+        }
+        
+        .pending-details h3 {
+            color: #856404;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .pending-details p {
+            margin: 10px 0;
+            font-size: 16px;
+        }
+        
+        .info-section {
+            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+            padding: 25px;
+            border-radius: 15px;
+            margin: 30px 0;
+            border-left: 5px solid #2196f3;
+        }
+        
+        .info-section h3 {
+            color: #1976d2;
+            margin-bottom: 20px;
+        }
+        
+        .info-section ul {
+            text-align: left;
+            padding-left: 20px;
+        }
+        
+        .info-section li {
+            margin: 10px 0;
+            font-size: 16px;
+        }
+        
+        .status-update {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+            border-left: 5px solid #6c757d;
+        }
+        
+        .status-update h4 {
+            color: #495057;
+            margin-bottom: 15px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #9933CC, #7B2C9E);
+            color: white;
+            padding: 18px 40px;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin: 10px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(153, 51, 204, 0.3);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(135deg, #6c757d, #495057);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(108, 117, 125, 0.3);
+        }
+        
+        .btn-warning {
+            background: linear-gradient(135deg, #ffc107, #e0a800);
+            color: #212529;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-warning:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(255, 193, 7, 0.3);
+        }
+        
+        .whatsapp-info {
+            background: linear-gradient(135deg, #e8f5e8, #c8e6c9);
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+            border-left: 5px solid #4caf50;
+        }
+        
+        .whatsapp-info h4 {
+            color: #2e7d32;
+            margin-bottom: 15px;
+        }
+        
+        .whatsapp-link {
+            background: #25d366;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 8px;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 10px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        .whatsapp-link:hover {
+            background: #128c7e;
+            transform: translateY(-2px);
+        }
+        
+        .timer {
+            background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+            border-left: 5px solid #ffc107;
+        }
+        
+        .timer h4 {
+            color: #856404;
+            margin-bottom: 15px;
+        }
+        
+        .countdown {
+            font-size: 2em;
+            font-weight: bold;
+            color: #856404;
+            margin: 10px 0;
+        }
+        
+        @media (max-width: 768px) {
+            .pending-container {
+                margin: 20px;
+                padding: 25px;
+            }
+            
+            .pending-title {
+                font-size: 2em;
+            }
+            
+            .btn-primary, .btn-secondary, .btn-warning {
+                display: block;
+                margin: 10px auto;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="index.html" class="logo-header-container">
+            <!-- Acá va una imagen background en el CSS -->
+        </a>
+    </div>
+    
+    <div class="pending-container">
+        <div class="pending-icon">⏳</div>
+        <h1 class="pending-title">Pago Pendiente</h1>
+        <p class="pending-subtitle">Tu compra de CRYPTO+ está siendo procesada</p>
+        
+        <div class="pending-details">
+            <h3>📋 Detalles de tu Orden</h3>
+            <p><strong>Producto:</strong> CRYPTO+</p>
+            <p><strong>Total a Pagar:</strong> $31.944 ARS</p>
+            <p><strong>Estado:</strong> <span style="color: #ffc107; font-weight: bold;">⏳ Pendiente de Confirmación</span></p>
+            <p><strong>Fecha:</strong> <span id="fechaPendiente"></span></p>
+        </div>
+        
+        <div class="info-section">
+            <h3>ℹ️ ¿Qué significa "Pendiente"?</h3>
+            <ul>
+                <li><strong>Pago en proceso:</strong> Tu banco está verificando la transacción</li>
+                <li><strong>Verificación de seguridad:</strong> Se están validando los datos de tu tarjeta</li>
+                <li><strong>Procesamiento bancario:</strong> El sistema está confirmando la disponibilidad de fondos</li>
+                <li><strong>Tiempo estimado:</strong> Este proceso suele tomar entre 5 minutos y 2 horas</li>
+            </ul>
+        </div>
+        
+        <div class="timer">
+            <h4>⏰ Tiempo Estimado de Confirmación</h4>
+            <div class="countdown" id="countdown">--:--</div>
+            <p style="margin: 0; color: #856404; font-size: 14px;">
+                Tiempo restante estimado para la confirmación
+            </p>
+        </div>
+        
+        <div class="status-update">
+            <h4>🔄 Actualización de Estado</h4>
+            <p>Te notificaremos por email cuando tu pago sea confirmado. También puedes verificar el estado en tu cuenta de Mercado Pago.</p>
+        </div>
+        
+        <div class="whatsapp-info">
+            <h4>💬 ¿Tienes preguntas?</h4>
+            <p>Si han pasado más de 2 horas y tu pago sigue pendiente, escríbenos:</p>
+            <a href="https://api.whatsapp.com/send/?phone=5493517056407&text=Hola,+mi+pago+de+CRYPTO%2B+sigue+pendiente+y+necesito+ayuda&type=phone_number&app_absent=0" 
+               class="whatsapp-link" target="_blank">
+                📱 Escribir por WhatsApp
+            </a>
+        </div>
+        
+        <div style="margin-top: 40px;">
+            <a href="checkout.html" class="btn-warning">🔄 Verificar Estado</a>
+            <a href="crypto_plus.html" class="btn-secondary">📚 Ver Producto</a>
+            <a href="index.html" class="btn-primary">🏠 Volver al Inicio</a>
+        </div>
+        
+        <div style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 10px;">
+            <p style="margin: 0; color: #666; font-size: 14px;">
+                <strong>Importante:</strong> No cierres esta página hasta que recibas la confirmación. 
+                Tu pago está siendo procesado de forma segura.
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Mostrar fecha actual
+        document.getElementById('fechaPendiente').textContent = new Date().toLocaleDateString('es-AR', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+
+        // Evento GA4 para pago pendiente
+        if (typeof gtag === "function") {
+            gtag("event", "payment_pending", {
+                currency: "ARS",
+                value: 31944,
+                items: [{ 
+                    item_id: "crypto_plus", 
+                    item_name: "Crypto+", 
+                    quantity: 1,
+                    price: 31944
+                }]
+            });
+        }
+
+        // Timer de cuenta regresiva (2 horas)
+        let tiempoRestante = 2 * 60 * 60; // 2 horas en segundos
+        
+        function actualizarTimer() {
+            const horas = Math.floor(tiempoRestante / 3600);
+            const minutos = Math.floor((tiempoRestante % 3600) / 60);
+            const segundos = tiempoRestante % 60;
+            
+            document.getElementById('countdown').textContent = 
+                `${String(horas).padStart(2, '0')}:${String(minutos).padStart(2, '0')}:${String(segundos).padStart(2, '0')}`;
+            
+            if (tiempoRestante > 0) {
+                tiempoRestante--;
+                setTimeout(actualizarTimer, 1000);
+            } else {
+                document.getElementById('countdown').textContent = "00:00:00";
+                document.getElementById('countdown').style.color = "#dc3545";
+            }
+        }
+        
+        // Iniciar timer
+        actualizarTimer();
+
+        // Verificar si hay datos del cliente en localStorage
+        const datosCliente = localStorage.getItem('datosCliente');
+        if (datosCliente) {
+            try {
+                const cliente = JSON.parse(datosCliente);
+                console.log('Datos del cliente recuperados:', cliente);
+                
+                // Aquí podrías enviar los datos a tu backend para seguimiento
+                // enviarDatosPendiente(cliente);
+                
+            } catch (error) {
+                console.error('Error al procesar datos del cliente:', error);
+            }
+        }
+
+        // Función para verificar estado del pago (simulada)
+        function verificarEstadoPago() {
+            // En un entorno real, aquí harías una llamada a tu backend
+            // para verificar el estado del pago en Mercado Pago
+            console.log('Verificando estado del pago...');
+            
+            // Simular verificación
+            setTimeout(() => {
+                alert('Estado del pago: Pendiente de confirmación bancaria. Te notificaremos por email cuando se confirme.');
+            }, 1000);
+        }
+
+        // Agregar evento al botón de verificar estado
+        document.querySelector('.btn-warning').addEventListener('click', function(e) {
+            e.preventDefault();
+            verificarEstadoPago();
+        });
+    </script>
+</body>
+</html>

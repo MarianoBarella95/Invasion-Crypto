@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XBL2WEFRD8"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-XBL2WEFRD8');
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="img/logos/Favicon.png" type="image/x-icon">
+    <link rel="apple-touch-icon" sizes="64x64" href="/img/logos/Favicon.png">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="query.css">
+    <meta property="og:image" content="https://invasioncrypto.com/img/open-graph.png">
+    <title>Checkout - Invasión Crypto</title>
+    <style>
+        .checkout-container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        .checkout-title {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            font-weight: bold;
+        }
+        
+        .form-section {
+            margin-bottom: 30px;
+        }
+        
+        .section-title {
+            color: #9933CC;
+            font-size: 1.3em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+            font-size: 16px;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: #fafafa;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #9933CC;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(153, 51, 204, 0.1);
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .btn-checkout {
+            background: linear-gradient(135deg, #9933CC, #7B2C9E);
+            color: white;
+            padding: 18px 40px;
+            border: none;
+            border-radius: 12px;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .btn-checkout:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(153, 51, 204, 0.3);
+        }
+        
+        .btn-checkout:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .product-summary {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 40px;
+            border-left: 5px solid #9933CC;
+        }
+        
+        .product-summary h3 {
+            color: #9933CC;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+        }
+        
+        .product-summary p {
+            margin: 8px 0;
+            font-size: 16px;
+        }
+        
+        .price-highlight {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #28a745;
+        }
+        
+        .error-message {
+            color: #dc3545;
+            font-size: 14px;
+            margin-top: 8px;
+            padding: 10px;
+            background: #f8d7da;
+            border-radius: 8px;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .success-message {
+            color: #28a745;
+            font-size: 14px;
+            margin-top: 8px;
+            padding: 10px;
+            background: #d4edda;
+            border-radius: 8px;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .required-field::after {
+            content: " *";
+            color: #dc3545;
+        }
+        
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .checkout-container {
+                margin: 20px;
+                padding: 25px;
+            }
+            
+            .checkout-title {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="index.html" class="logo-header-container">
+            <!-- Acá va una imagen background en el CSS -->
+        </a>
+    </div>
+    
+    <div class="checkout-container">
+        <h1 class="checkout-title">Finalizar Compra</h1>
+        
+        <div class="product-summary">
+            <h3>🛒 Resumen del Producto</h3>
+            <p><strong>Producto:</strong> CRYPTO+ - Chat de Alertas</p>
+            <p><strong>Tipo:</strong> Suscripción Mensual</p>
+            <p><strong>Precio Base:</strong> $26.400 ARS</p>
+            <p><strong>IVA (21%):</strong> $5.544 ARS</p>
+            <p class="price-highlight"><strong>Total Mensual:</strong> $31.944 ARS</p>
+        </div>
+        
+        <form id="checkoutForm">
+            <!-- Datos Personales -->
+            <div class="form-section">
+                <h3 class="section-title">👤 Datos Personales</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="nombre" class="required-field">Nombre</label>
+                        <input type="text" id="nombre" name="nombre" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="apellido" class="required-field">Apellido</label>
+                        <input type="text" id="apellido" name="apellido" required>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="email" class="required-field">Email</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="telefono" class="required-field">Teléfono</label>
+                        <input type="tel" id="telefono" name="telefono" placeholder="+54 9 351 123 4567" required>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="dni" class="required-field">DNI</label>
+                        <input type="text" id="dni" name="dni" placeholder="12345678" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="fechaNacimiento">Fecha de Nacimiento</label>
+                        <input type="date" id="fechaNacimiento" name="fechaNacimiento">
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Dirección -->
+            <div class="form-section">
+                <h3 class="section-title">📍 Dirección</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="pais" class="required-field">País</label>
+                        <select id="pais" name="pais" required>
+                            <option value="">Selecciona un país</option>
+                            <option value="AR">Argentina</option>
+                            <option value="CL">Chile</option>
+                            <option value="CO">Colombia</option>
+                            <option value="MX">México</option>
+                            <option value="PE">Perú</option>
+                            <option value="UY">Uruguay</option>
+                            <option value="VE">Venezuela</option>
+                            <option value="OTRO">Otro</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="provincia" class="required-field">Provincia/Estado</label>
+                        <input type="text" id="provincia" name="provincia" required>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="ciudad" class="required-field">Ciudad</label>
+                        <input type="text" id="ciudad" name="ciudad" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="codigoPostal">Código Postal</label>
+                        <input type="text" id="codigoPostal" name="codigoPostal">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="direccion">Dirección Completa</label>
+                    <input type="text" id="direccion" name="direccion" placeholder="Calle, número, piso, depto">
+                </div>
+            </div>
+            
+            <!-- Información Adicional -->
+            <div class="form-section">
+                <h3 class="section-title">📝 Información Adicional</h3>
+                <div class="form-group">
+                    <label for="comentarios">Comentarios o Notas</label>
+                    <textarea id="comentarios" name="comentarios" rows="4" placeholder="¿Tienes alguna pregunta o comentario especial?"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="comoConociste">¿Cómo nos conociste?</label>
+                    <select id="comoConociste" name="comoConociste">
+                        <option value="">Selecciona una opción</option>
+                        <option value="redes_sociales">Redes Sociales</option>
+                        <option value="recomendacion">Recomendación</option>
+                        <option value="buscador">Buscador (Google, etc.)</option>
+                        <option value="youtube">YouTube</option>
+                        <option value="tiktok">TikTok</option>
+                        <option value="otro">Otro</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- Términos y Condiciones -->
+            <div class="form-section">
+                <div class="form-group">
+                    <label style="display: flex; align-items: center; cursor: pointer;">
+                        <input type="checkbox" id="aceptoTerminos" name="aceptoTerminos" required style="width: auto; margin-right: 10px;">
+                        <span>Acepto los <a href="#" style="color: #9933CC; text-decoration: underline;">términos y condiciones</a> y la <a href="#" style="color: #9933CC; text-decoration: underline;">política de privacidad</a></span>
+                    </label>
+                </div>
+                
+                <div class="form-group">
+                    <label style="display: flex; align-items: center; cursor: pointer;">
+                        <input type="checkbox" id="aceptoNewsletter" name="aceptoNewsletter" style="width: auto; margin-right: 10px;">
+                        <span>Deseo recibir información sobre nuevos productos y ofertas especiales</span>
+                    </label>
+                </div>
+            </div>
+            
+            <button type="submit" class="btn-checkout" id="btnPagar">
+                💳 Proceder al Pago
+            </button>
+        </form>
+        
+        <div id="mensaje" style="margin-top: 20px; text-align: center;"></div>
+    </div>
+
+    <script src="checkout.js"></script>
+</body>
+</html>
