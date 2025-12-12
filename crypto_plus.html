@@ -58,14 +58,14 @@
                 Vivo Mensual
             </li>
         </ul>
-        <a href="https://bit.ly/InvasiónCrypto" class="nav-link nav-link-secondary">
+       <!-- <a href="https://bit.ly/InvasiónCrypto" class="nav-link nav-link-secondary">
             SUSCRIBITE AHORA
             <img src="img/flecha-arriba-derecha-blanca.png" alt="" class="nav-link-img-secondary">
-        </a>
-        <!-- <a href="#" id="btnCarrito" class="nav-link nav-link-secondary">
-            AGREGAR AL CARRITO
-            <img src="img/flecha-arriba-derecha-blanca.png" alt="" class="nav-link-img-secondary">
         </a> -->
+        <a href="#" id="btnSubscribe" class="nav-link nav-link-secondary">
+            SUSCRIBITE AHORA
+            <img src="img/flecha-arriba-derecha-blanca.png" alt="" class="nav-link-img-secondary">
+        </a> 
     </div>
     <div class="banner-secondary">
         <video autoplay loop muted playsinline style="width: 100%; height: auto;">
@@ -74,9 +74,61 @@
         </video> 
     </div>
 
-    <!-- CARRITO OVERLAY -->
+    <!-- LOGIN MODAL -->
+    <div class="overlay-carrito" id="overlayLogin">
+        <div class="carrito-contenido">
+            <h2>Iniciar Sesión</h2>
+            <form id="loginForm" style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
+                <input type="email" id="email" placeholder="Email" required style="padding: 8px;">
+                <input type="password" id="password" placeholder="Contraseña" required style="padding: 8px;">
+                <button type="submit" id="btnLogin" style="background-color: #9933CC; color: white; border: none; padding: 10px; cursor: pointer;">Ingresar</button>
+            </form>
+            <p style="margin-top: 10px; font-size: 0.9em; color: black;">¿No tenés cuenta? <a href="#" id="linkToRegister" style="color: #9933CC;">Registrate</a></p>
+            <button id="cerrarLogin" class="cerrar-btn">Cerrar</button>
+        </div>
+    </div>
 
-    <!-- <div class="overlay-carrito" id="overlayCarrito">
+    <!-- REGISTER MODAL -->
+    <div class="overlay-carrito" id="overlayRegister">
+        <div class="carrito-contenido">
+            <h2>Registrarse</h2>
+            <form id="registerForm" style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
+                <input type="text" id="regName" placeholder="Nombre" required style="padding: 8px;">
+                <input type="email" id="regEmail" placeholder="Email" required style="padding: 8px;">
+                <input type="password" id="regPassword" placeholder="Contraseña" required style="padding: 8px;">
+                <button type="submit" id="btnRegister" style="background-color: #9933CC; color: white; border: none; padding: 10px; cursor: pointer;">Registrarse</button>
+            </form>
+            <p style="margin-top: 10px; font-size: 0.9em; color: black;">¿Ya tenés cuenta? <a href="#" id="linkToLogin" style="color: #9933CC;">Iniciá Sesión</a></p>
+            <button id="cerrarRegister" class="cerrar-btn">Cerrar</button>
+        </div>
+    </div>
+
+    <!-- PAYMENT MODAL -->
+    <div class="overlay-carrito" id="overlayPayment">
+        <div class="carrito-contenido">
+            <h2>Elegí tu forma de pago</h2>
+            <div class="payment-options" style="display: flex; flex-direction: column; gap: 15px; margin-top: 20px;">
+                <a href="https://www.mercadopago.com.ar/subscriptions/checkout?preapproval_plan_id=2c93808490c3cf9e0190eafba9930b25" class="payment-btn" style="background-color: #009EE3; color: white; padding: 10px; text-decoration: none; border-radius: 5px; font-family: 'Fira Sans', sans-serif;">
+                    Mercado Pago (Crypto+)
+                </a>
+                <a href="https://www.mercadopago.com.ar/subscriptions/checkout/v2?preapproval_plan_id=2c93808490c3cfa40190eafd2ed00b1a" class="payment-btn" style="background-color: #009EE3; color: white; padding: 10px; text-decoration: none; border-radius: 5px; font-family: 'Fira Sans', sans-serif;">
+                    Mercado Pago (Referido Vendedora)
+                </a>
+                
+                <div class="manual-payment-section" style="border-top: 1px solid #ccc; padding-top: 15px;">
+                    <h3 style="font-size: 1.2rem; margin-bottom: 5px;">Pago Manual</h3>
+                    <p style="font-size: 0.9rem; margin-bottom: 10px;">Transferencia, PayPal, Crypto</p>
+                    <a href="https://api.whatsapp.com/send/?phone=5493517056407&text=Hola,+quiero+abonar+Crypto%2B+de+forma+manual+(Transferencia/PayPal/Crypto)&type=phone_number&app_absent=0" target="_blank" class="payment-btn" style="background-color: #25D366; color: white; padding: 10px; text-decoration: none; border-radius: 5px; display: block; font-family: 'Fira Sans', sans-serif;">
+                        Coordinar por WhatsApp
+                    </a>
+                </div>
+            </div>
+            <button id="cerrarPayment" class="cerrar-btn">Cerrar</button>
+        </div>
+    </div>
+
+    <!-- CARRITO OVERLAY (Legacy/Unused for now) -->
+    <div class="overlay-carrito" id="overlayCarrito" style="display: none;">
         <div class="carrito-contenido">
             <h2>Tu carrito:</h2>
             <p>Producto: <strong>Crypto+</strong></p>
@@ -84,7 +136,7 @@
             <button id="btnComprar">Ir a Mercado Pago</button>
             <button id="cerrarCarrito" class="cerrar-btn">Cerrar</button>
         </div>
-    </div> -->
+    </div>
 
 
     <!-- <div class="links">
