@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (email && password) {
         try {
-          const response = await fetch('https://invasioncrypto-api.vercel.app/login', {
+          const response = await fetch('https://invasioncrypto-api.vercel.app/api/auth/login', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json'
@@ -152,7 +152,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (name && email && password) {
         try {
-          const response = await fetch('https://invasioncrypto-api.vercel.app/register', {
+          const response = await fetch('https://invasioncrypto-api.vercel.app/api/auth/register', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json'
