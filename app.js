@@ -7,12 +7,45 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnCerrarLogin = document.getElementById("cerrarLogin");
   const loginForm = document.getElementById("loginForm");
 
+  // ELEMENTOS DEL USUARIO
+  const userControls = document.getElementById("userControls");
+  const userDisplayName = document.getElementById("userDisplayName");
+  const btnLogout = document.getElementById("btnLogout");
+
+  // FUNCIÓN PARA ACTUALIZAR UI DE USUARIO
+  const updateUserUI = () => {
+    const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+    const userName = localStorage.getItem("userName") || localStorage.getItem("userEmail");
+
+    if (isLoggedIn && userControls) {
+      userControls.style.display = "flex";
+      if (userDisplayName) userDisplayName.textContent = userName;
+    } else if (userControls) {
+      userControls.style.display = "none";
+    }
+  };
+
   // LINK DE MERCADO PAGO (Fallback / Legacy)
   const MP_LINK = "https://www.mercadopago.com.ar/subscriptions/checkout?preapproval_plan_id=2c93808490c3cf9e0190eafba9930b25";
 
   // ELEMENTOS DEL MODAL PAGO
   const overlayPayment = document.getElementById("overlayPayment");
   const btnCerrarPayment = document.getElementById("cerrarPayment");
+
+  // INICIALIZAR UI DE USUARIO
+  updateUserUI();
+
+  // LOGOUT LOGIC
+  if (btnLogout) {
+    btnLogout.addEventListener("click", () => {
+      localStorage.removeItem("isLoggedIn");
+      localStorage.removeItem("userEmail");
+      localStorage.removeItem("userName");
+      localStorage.removeItem("authToken");
+      updateUserUI();
+      showToast("Sesión cerrada correctamente.");
+    });
+  }
 
   // LÓGICA DE SUSCRIPCIÓN
   if (btnSubscribe && overlayLogin && btnCerrarLogin && loginForm) {
@@ -62,6 +95,8 @@ document.addEventListener('DOMContentLoaded', () => {
             localStorage.setItem("userEmail", email);
             if (data.name) localStorage.setItem("userName", data.name);
             if (data.token) localStorage.setItem("authToken", data.token);
+
+            updateUserUI();
 
             // Cerrar modal y mostrar pago
             overlayLogin.classList.remove("active");
@@ -169,6 +204,8 @@ document.addEventListener('DOMContentLoaded', () => {
             localStorage.setItem("isLoggedIn", "true");
             localStorage.setItem("userEmail", email);
             localStorage.setItem("userName", name);
+
+            updateUserUI();
 
             overlayRegister.classList.remove("active");
             if (overlayPayment) {
