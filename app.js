@@ -139,6 +139,80 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  // ELEMENTOS DEL MODAL FORGOT PASSWORD
+  const overlayForgotPassword = document.getElementById("overlayForgotPassword");
+  const forgotPasswordForm = document.getElementById("forgotPasswordForm");
+  const linkToForgotPassword = document.getElementById("linkToForgotPassword");
+  const linkBackToLogin = document.getElementById("linkBackToLogin");
+  const btnCerrarForgotPassword = document.getElementById("cerrarForgotPassword");
+
+  // SWITCH MODALS - FORGOT PASSWORD
+  if (linkToForgotPassword && overlayLogin && overlayForgotPassword) {
+    linkToForgotPassword.addEventListener("click", (e) => {
+      e.preventDefault();
+      overlayLogin.classList.remove("active");
+      overlayForgotPassword.classList.add("active");
+    });
+  }
+
+  if (linkBackToLogin && overlayLogin && overlayForgotPassword) {
+    linkBackToLogin.addEventListener("click", (e) => {
+      e.preventDefault();
+      overlayForgotPassword.classList.remove("active");
+      overlayLogin.classList.add("active");
+    });
+  }
+
+  // CLOSE FORGOT PASSWORD MODAL
+  if (btnCerrarForgotPassword && overlayForgotPassword) {
+    btnCerrarForgotPassword.addEventListener("click", () => {
+      overlayForgotPassword.classList.remove("active");
+    });
+
+    // Close on click outside
+    overlayForgotPassword.addEventListener("click", (e) => {
+      if (e.target === overlayForgotPassword) {
+        overlayForgotPassword.classList.remove("active");
+      }
+    });
+  }
+
+  // FORGOT PASSWORD LOGIC
+  if (forgotPasswordForm) {
+    forgotPasswordForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const email = document.getElementById("forgotEmail").value;
+
+      if (email) {
+        try {
+          const response = await fetch('https://invasioncrypto-api.vercel.app/api/auth/forgot-password', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ email })
+          });
+
+          const data = await response.json();
+
+          if (response.ok) {
+            showToast("Se envió un enlace de recuperación a tu email.");
+            forgotPasswordForm.reset();
+            overlayForgotPassword.classList.remove("active");
+            overlayLogin.classList.add("active");
+          } else {
+            showToast(data.message || "No pudimos encontrar una cuenta con ese email.");
+          }
+        } catch (error) {
+          console.error("Error:", error);
+          showToast("Hubo un problema con la conexión.");
+        }
+      } else {
+        showToast("Por favor ingresá tu email.");
+      }
+    });
+  }
+
   // ELEMENTOS DEL MODAL REGISTER
   const overlayRegister = document.getElementById("overlayRegister");
   const registerForm = document.getElementById("registerForm");
