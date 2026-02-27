@@ -176,26 +176,6 @@
               </tbody>
             </table>
           </div>
-
-          <div
-            style="
-              background-color: #e9ecef;
-              padding: 1rem;
-              border-radius: 4px;
-              margin-top: 2rem;
-            "
-          >
-            <strong style="color: #495057"
-              >Nota sobre Pagos Automáticos:</strong
-            >
-            <span style="color: #6c757d"
-              >Para automatizar la validación de PayPal y MercadoPago, se
-              requiere configurar webhooks en el backend que escuchen los
-              eventos de pago exitoso de esas plataformas y actualicen el estado
-              del usuario automáticamente en la base de datos, habilitando su
-              acceso sin intervención manual.</span
-            >
-          </div>
         </section>
 
         <!-- SECTION: USUARIOS -->
@@ -338,6 +318,7 @@
                 <button
                   class="btn-dashboard"
                   style="padding: 0.4rem 0.8rem; font-size: 0.9rem"
+                  onclick="openModalVideo()"
                 >
                   + Cargar Video
                 </button>
@@ -514,6 +495,128 @@
             </div>
           </div>
         </section>
+        <!-- MODAL CARGAR VIDEO -->
+        <div class="overlay-carrito" id="modalVideo" style="z-index: 2000">
+          <div
+            class="carrito-contenido"
+            style="text-align: left; max-width: 450px"
+          >
+            <div
+              style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 1rem;
+              "
+            >
+              <h3
+                style="
+                  font-family: &quot;Fira Sans&quot;, sans-serif;
+                  color: #333;
+                  margin: 0;
+                "
+              >
+                Cargar Nuevo Video
+              </h3>
+              <button
+                onclick="closeModalVideo()"
+                style="
+                  background: none;
+                  border: none;
+                  font-size: 1.2rem;
+                  cursor: pointer;
+                "
+              >
+                ✖
+              </button>
+            </div>
+            <form
+              id="formCargarVideo"
+              style="display: flex; flex-direction: column; gap: 1rem"
+            >
+              <div class="input-group">
+                <label
+                  style="
+                    font-family: &quot;Fira Sans&quot;, sans-serif;
+                    font-size: 0.9rem;
+                    color: #555;
+                  "
+                  >Título del Video</label
+                >
+                <input
+                  type="text"
+                  id="vid-titulo"
+                  required
+                  placeholder="Ej. Vivo Marzo 2026"
+                  style="
+                    padding: 0.75rem;
+                    border: 1px solid #ccc;
+                    border-radius: 4px;
+                    font-family: &quot;Fira Code&quot;, monospace;
+                    font-size: 0.9rem;
+                    width: 100%;
+                  "
+                />
+              </div>
+              <div class="input-group">
+                <label
+                  style="
+                    font-family: &quot;Fira Sans&quot;, sans-serif;
+                    font-size: 0.9rem;
+                    color: #555;
+                  "
+                  >URL de YouTube (URL directa)</label
+                >
+                <input
+                  type="text"
+                  id="vid-url"
+                  required
+                  placeholder="https://www.youtube.com/watch?v=..."
+                  style="
+                    padding: 0.75rem;
+                    border: 1px solid #ccc;
+                    border-radius: 4px;
+                    font-family: &quot;Fira Code&quot;, monospace;
+                    font-size: 0.9rem;
+                    width: 100%;
+                  "
+                />
+              </div>
+              <div class="input-group">
+                <label
+                  style="
+                    font-family: &quot;Fira Sans&quot;, sans-serif;
+                    font-size: 0.9rem;
+                    color: #555;
+                  "
+                  >Descripción</label
+                >
+                <textarea
+                  id="vid-desc"
+                  rows="4"
+                  placeholder="Insertá la descripción del video acá..."
+                  style="
+                    padding: 0.75rem;
+                    border: 1px solid #ccc;
+                    border-radius: 4px;
+                    font-family: &quot;Fira Code&quot;, monospace;
+                    font-size: 0.9rem;
+                    width: 100%;
+                    resize: vertical;
+                  "
+                ></textarea>
+              </div>
+              <button
+                type="button"
+                class="btn-dashboard"
+                onclick="guardarVideo()"
+                style="margin-top: 0.5rem; width: 100%"
+              >
+                Guardar Video
+              </button>
+            </form>
+          </div>
+        </div>
       </main>
     </div>
 
@@ -565,6 +668,31 @@
       if (localStorage.getItem("isAdminLoggedIn") !== "true") {
         // alert('Acceso denegado.');
         // window.location.href = 'admin_login.html'; // Descomentado en prod
+      }
+
+      // Logica del Modal de Videos
+      function openModalVideo() {
+        document.getElementById("modalVideo").classList.add("active");
+      }
+
+      function closeModalVideo() {
+        document.getElementById("modalVideo").classList.remove("active");
+        document.getElementById("formCargarVideo").reset();
+      }
+
+      function guardarVideo() {
+        const titulo = document.getElementById("vid-titulo").value;
+        const url = document.getElementById("vid-url").value;
+        if (!titulo || !url) {
+          alert("Por favor completá los campos obligatorios para el video.");
+          return;
+        }
+        alert(
+          'El video "' +
+            titulo +
+            '" se ha guardado y catalogado con éxito. (Simulación)',
+        );
+        closeModalVideo();
       }
     </script>
   </body>
