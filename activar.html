@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Activar Membresía - Invasión Crypto</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="auth.css" />
+    <link
+      rel="shortcut icon"
+      href="img/logos/Favicon.png"
+      type="image/x-icon"
+    />
+  </head>
+  <body class="auth-body">
+    <div
+      class="header"
+      style="
+        grid-column: 1 / 3;
+        grid-row: 1 / 2;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 1rem;
+        width: 100vw;
+        position: fixed;
+        top: 0;
+        z-index: 100;
+      "
+    >
+      <a href="index.html" class="logo-header-container"></a>
+    </div>
+
+    <div class="auth-container">
+      <div class="simple-message-box" style="padding: 2rem">
+        <h2 style="font-size: 1.5rem; text-align: center">
+          Suscribirse a CRYPTO+ <br /><span
+            style="font-size: 1.1rem; color: #555"
+            >(Membresía mensual)</span
+          >
+        </h2>
+
+        <div
+          style="
+            background-color: #f9f9f9;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            width: 100%;
+            text-align: left;
+          "
+        >
+          <p
+            style="
+              font-weight: bold;
+              font-size: 1.2rem;
+              margin-bottom: 0.5rem;
+              color: #333;
+              text-align: center;
+            "
+          >
+            Acceso Total
+          </p>
+          <ul
+            style="
+              list-style-type: disc;
+              margin-left: 1.5rem;
+              color: #555;
+              gap: 0.5rem;
+              display: flex;
+              flex-direction: column;
+            "
+          >
+            <li>Chat de Alertas por Whatsapp</li>
+            <li>Consultas al equipo</li>
+            <li>Vivo Mensual</li>
+            <li>Comunidad Privada (Café)</li>
+          </ul>
+        </div>
+
+        <p style="font-weight: bold; color: #333; margin-top: 1rem">
+          Elegí tu método de pago:
+        </p>
+
+        <div class="payment-options-grid">
+          <!-- Mercado Pago -->
+          <a
+            href="https://www.mercadopago.com.ar/subscriptions/checkout?preapproval_plan_id=2c93808490c3cf9e0190eafba9930b25"
+            target="_blank"
+            class="btn-primary btn-mp"
+            style="
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              gap: 10px;
+            "
+            onclick="continueToConfirmation()"
+          >
+            <img
+              src="https://logospng.org/download/mercado-pago/logo-mercado-pago-icono-256.png"
+              alt="MP"
+              style="width: 20px; filter: brightness(0) invert(1)"
+            />
+            Mercado Pago (Automático)
+          </a>
+
+          <!-- PayPal -->
+          <a
+            href="https://www.paypal.com/paypalme/sempergy?country.x=AR&locale.x=en_US"
+            target="_blank"
+            class="btn-secondary"
+            style="
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              gap: 10px;
+              background-color: white;
+            "
+            onclick="continueToConfirmation()"
+          >
+            <img
+              src="https://cdn-icons-png.flaticon.com/512/174/174861.png"
+              alt="PayPal"
+              style="width: 20px"
+            />
+            Transferencia / PayPal
+          </a>
+
+          <!-- Pago Manual WhatsApp -->
+          <a
+            href="https://api.whatsapp.com/send/?phone=5493517056407&text=Hola,+quiero+suscribirme+a+Crypto%2B+abonando+con+cryptos+o+transferencia.&type=phone_number&app_absent=0"
+            target="_blank"
+            class="btn-primary btn-whatsapp"
+            style="
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              gap: 10px;
+            "
+            onclick="continueToConfirmation()"
+          >
+            <img
+              src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/WhatsApp.svg/1024px-WhatsApp.svg.png"
+              alt="WhatsApp"
+              style="width: 20px; filter: brightness(0) invert(1)"
+            />
+            Pago Manual (Cryptos)
+          </a>
+        </div>
+
+        <p style="font-size: 0.8rem; color: #888; margin-top: 1rem">
+          Al abonar, serás redirigido para informar tu pago.
+        </p>
+      </div>
+    </div>
+
+    <script>
+      function continueToConfirmation() {
+        // Un pequeño delay para que dé tiempo de abrir la nueva pestaña de pago
+        // antes de avanzar de pantalla en esta misma pestaña.
+        setTimeout(() => {
+          window.location.href = "confirmacion_pago.html";
+        }, 1000);
+      }
+    </script>
+  </body>
+</html>
