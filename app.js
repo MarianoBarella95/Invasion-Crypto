@@ -107,26 +107,32 @@ document.addEventListener('DOMContentLoaded', () => {
           method: "POST",
           body: JSON.stringify({ email, password })
         });
-
         const data = await response.json();
+        console.log("LOGIN RESPONSE DATA:", data);
 
         if (response.ok) {
           localStorage.setItem("isLoggedIn", "true");
-          // Guardar cualquier variante de token que devuelva el backend
           const token = data.token || data.accessToken || data.jwt;
           localStorage.setItem("authToken", token);
           localStorage.setItem("userEmail", email);
           localStorage.setItem("userName", data.user ? data.user.name : "Usuario");
+
           // Detectar rol de forma hiper-robusta (considerando variantes del backend)
           let roleRaw = "user";
-          if (data.user && data.user.role) roleRaw = data.user.role;
-          else if (data.user && data.user.rol) roleRaw = data.user.rol;
+          if (data.isAdmin === true || data.isAdmin === "true" || (data.user && (data.user.isAdmin === true || data.user.isAdmin === "true"))) roleRaw = "admin";
+          else if (data.is_admin === true || data.is_admin === "true" || (data.user && (data.user.is_admin === true || data.user.is_admin === "true"))) roleRaw = "admin";
+          else if (data.role_id == 1 || data.rol_id == 1 || (data.user && (data.user.role_id == 1 || data.user.rol_id == 1))) roleRaw = "admin";
           else if (data.role) roleRaw = data.role;
           else if (data.rol) roleRaw = data.rol;
+          else if (data.user && data.user.role) roleRaw = data.user.role;
+          else if (data.user && data.user.rol) roleRaw = data.user.rol;
+          else if (data.user && data.user.tipo) roleRaw = data.user.tipo;
 
           const role = String(roleRaw).toLowerCase();
+          console.log("DETECTED ROLE FINAL:", role);
+
           localStorage.setItem("userRole", role);
-          localStorage.setItem("userStatus", data.user ? data.user.estado : "denegado");
+          localStorage.setItem("userStatus", data.user ? (data.user.estado || data.user.status) : "denegado");
           
           showToast("Login exitoso.");
           setTimeout(() => {
