@@ -199,6 +199,7 @@
               "
             >
               <h3
+                id="modalVideoTitle"
                 style="
                   font-family: &quot;Fira Sans&quot;, sans-serif;
                   color: #333;
@@ -223,6 +224,7 @@
               id="formCargarVideo"
               style="display: flex; flex-direction: column; gap: 1rem"
             >
+              <input type="hidden" id="vid-id" />
               <div class="input-group">
                 <label style="font-size: 0.9rem; color: #555;">Título del Video</label>
                 <input type="text" id="vid-titulo" required style="padding: 0.75rem; border: 1px solid #ccc; width: 100%; border-radius: 4px;"/>
@@ -391,6 +393,7 @@
                       <div style="font-size: 0.8rem; color: #666">${v.descripcion}</div>
                     </div>
                     <div>
+                      <button style="border: none; background: none; cursor: pointer; margin-right: 10px;" onclick="editarVideo('${v._id}', ${JSON.stringify(v.titulo).replace(/"/g, '&quot;')}, ${JSON.stringify(v.link).replace(/"/g, '&quot;')}, ${JSON.stringify(v.descripcion || '').replace(/"/g, '&quot;')}, '${v.categoria}')">✏️</button>
                       <button style="border: none; background: none; cursor: pointer" onclick="deleteVideo('${v._id}')">🗑️</button>
                     </div>
                 `;
@@ -479,12 +482,26 @@
       }
 
       function openModalVideo() {
+        document.getElementById("vid-id").value = "";
+        document.getElementById("modalVideoTitle").innerText = "Cargar Nuevo Video";
         document.getElementById("modalVideo").classList.add("active");
       }
 
       function closeModalVideo() {
         document.getElementById("modalVideo").classList.remove("active");
         document.getElementById("formCargarVideo").reset();
+        document.getElementById("vid-id").value = "";
+      }
+
+      function editarVideo(id, titulo, link, descripcion, categoria) {
+        document.getElementById("vid-id").value = id;
+        document.getElementById("vid-titulo").value = titulo;
+        document.getElementById("vid-iframe").value = `<iframe src="${link}"></iframe>`; // Pseudocodigo para que el regex lo agarre si el admin no lo cambia
+        document.getElementById("vid-desc").value = descripcion;
+        document.getElementById("vid-isPremium").checked = (categoria === 'premium');
+        
+        document.getElementById("modalVideoTitle").innerText = "Editar Video";
+        document.getElementById("modalVideo").classList.add("active");
       }
 
       async function guardarVideo() {
@@ -506,9 +523,19 @@
         }
         const link = srcMatch[1];
 
+        const videoId = document.getElementById("vid-id").value;
+
         try {
-          const response = await apiFetch("/api/videos", {
-            method: "POST",
+          let method = "POST";
+          let endpoint = "/api/videos";
+          
+          if (videoId) {
+            method = "PUT";
+            endpoint = `/api/videos/${videoId}`;
+          }
+
+          const response = await apiFetch(endpoint, {
+            method: method,
             body: JSON.stringify({
               titulo,
               descripcion,
@@ -518,7 +545,7 @@
           });
 
           if (response.ok) {
-            showToast("Video cargado correctamente.");
+            showToast(videoId ? "Video modificado correctamente." : "Video cargado correctamente.");
             closeModalVideo();
             renderVideosAdmin();
           } else {
