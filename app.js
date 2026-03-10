@@ -141,30 +141,52 @@ document.addEventListener('DOMContentLoaded', () => {
           const userName = searchDeep(data, ["name", "nombre", "username", "display_name", "fullName"]) || "Usuario";
           localStorage.setItem("userName", userName);
 
-          // Función para decodificar JWT de forma segura
+          // Función para decodificar JWT de forma segura (con manejo de padding)
           function parseJwt(token) {
             try {
+              if (!token) return null;
               const base64Url = token.split('.')[1];
-              const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+              if (!base64Url) return null;
+              let base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+              // Manejar el padding de base64
+              while (base64.length % 4) {
+                base64 += '=';
+              }
               const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
                 return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
               }).join(''));
               return JSON.parse(jsonPayload);
             } catch (e) {
+              console.error("JWT Parse Error:", e);
               return null;
             }
           }
 
           const jwtPayload = parseJwt(token);
-          console.log("JWT Payload:", jwtPayload);
+          console.log("JWT Decoded Payload:", jwtPayload);
 
           // Detectar rol de forma ultra-robusta
           let roleRaw = "user";
           
-          // 1. Prioridad: Lo que diga el JWT (es lo más oficial del backend)
-          if (jwtPayload && jwtPayload.role) roleRaw = jwtPayload.role;
-          else if (jwtPayload && jwtPayload.rol) roleRaw = jwtPayload.rol;
-          else if (jwtPayload && jwtPayload.isAdmin) roleRaw = "admin";
+          // 0. Bypass de seguridad para cuenta maestra
+          if (email.toLowerCase() === "admincrypto@gmail.com") {
+            console.log("Master Admin account detected! Forcing admin role.");
+            roleRaw = "admin";
+          } else {
+            // 1. Prioridad: Lo que diga el JWT (es lo más oficial del backend)
+            if (jwtPayload) {
+              if (jwtPayload.role) roleRaw = jwtPayload.role;
+              else if (jwtPayload.rol) roleRaw = jwtPayload.rol;
+              else if (jwtPayload.isAdmin === true || jwtPayload.isAdmin === "true") roleRaw = "admin";
+              else if (jwtPayload.role_id == 1 || jwtPayload.rol_id == 1) roleRaw = "admin";
+            }
+          }
+          
+          // Especial: Si estamos en la página de login de admin, ser más riguroso
+          const isAdminPage = window.location.pathname.includes("admin_login.html");
+          if (isAdminPage && roleRaw === "user") {
+            console.log("Admin page detected, checking for signals again...");
+          }
           
           // 2. Si no está en el JWT, buscar en el cuerpo de la respuesta (recursivo)
           if (roleRaw === "user") {
@@ -207,10 +229,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
           setTimeout(() => {
             const finalRole = localStorage.getItem("userRole") || role;
+            console.log("REDIRECTING TO:", finalRole === "admin" ? "admin_panel.html" : "panel_usuario.html");
             if (finalRole === "admin") {
-              window.location.href = "admin_panel.html";
+              window.location.replace("admin_panel.html"); // Usar replace para evitar historial sucio
             } else {
-              window.location.href = "panel_usuario.html";
+              window.location.replace("panel_usuario.html");
             }
           }, 1000);
         } else {
