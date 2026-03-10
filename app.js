@@ -113,7 +113,6 @@ document.addEventListener('DOMContentLoaded', () => {
           body: JSON.stringify({ email, password })
         });
         const data = await response.json();
-        console.log("LOGIN RESPONSE DATA:", data);
 
         if (response.ok) {
           localStorage.setItem("isLoggedIn", "true");
@@ -163,7 +162,6 @@ document.addEventListener('DOMContentLoaded', () => {
           }
 
           const jwtPayload = parseJwt(token);
-          console.log("JWT Decoded Payload:", jwtPayload);
 
           // Detectar rol de forma ultra-robusta
           let roleRaw = "user";
@@ -219,17 +217,9 @@ document.addEventListener('DOMContentLoaded', () => {
           localStorage.setItem("userStatus", stateRaw);
           
           showToast("Login exitoso. Redirigiendo...");
-          
-          // Debugging final antes de redirigir
-          console.log("FINAL CHECKS:", {
-            tokenSaved: localStorage.getItem("authToken"),
-            roleSaved: localStorage.getItem("userRole"),
-            isLoggedIn: localStorage.getItem("isLoggedIn")
-          });
 
           setTimeout(() => {
             const finalRole = localStorage.getItem("userRole") || role;
-            console.log("REDIRECTING TO:", finalRole === "admin" ? "admin_panel.html" : "panel_usuario.html");
             // Pasar token y rol como params de URL como fallback contra bloqueo de localStorage
             const encodedToken = encodeURIComponent(token || "");
             if (finalRole === "admin") {

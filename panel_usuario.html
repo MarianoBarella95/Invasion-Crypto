@@ -364,14 +364,6 @@
         const authToken = localStorage.getItem("authToken") || urlToken;
         const userRole = localStorage.getItem("userRole") || urlRole;
 
-        const debugInfo = `[DEBUG panel_usuario]
-isLoggedIn: ${isLoggedIn}
-authToken: ${authToken ? authToken.substring(0,20)+'...' : 'MISSING'}
-userRole: ${userRole}
-urlRole: ${urlRole}`;
-        console.log(debugInfo);
-        alert(debugInfo);
-
         if (!isLoggedIn || !authToken) {
             console.warn("Sesión no detectada. Redirigiendo a index...");
             localStorage.removeItem("isLoggedIn");
