@@ -88,6 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
     btnCerrarLogin.addEventListener("click", () => {
       overlayLogin.classList.remove("active");
     });
+  }
 
   // Manejo del Login Consolidado
   const handleLogin = async (e) => {
