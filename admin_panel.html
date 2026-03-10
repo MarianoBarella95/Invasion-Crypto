@@ -413,11 +413,11 @@
             });
 
             if (response.ok) {
-              alert(`Estado actualizado a ${nuevoEstado}`);
+              showToast(`Estado actualizado a ${nuevoEstado}`);
               initAdmin();
             } else {
               const data = await response.json();
-              alert("Error: " + data.message);
+              showToast("Error: " + data.message);
             }
           } catch (error) {
             console.error("Error actualizando usuario:", error);
@@ -432,10 +432,10 @@
                 });
 
                 if (response.ok) {
-                  alert("Video eliminado.");
+                  showToast("Video eliminado.");
                   renderVideosAdmin();
                 } else {
-                  alert("Error al eliminar el video.");
+                  showToast("Error al eliminar el video.");
                 }
               } catch (error) {
                 console.error("Error eliminando video:", error);
@@ -494,14 +494,14 @@
         const isPremium = document.getElementById("vid-isPremium").checked;
 
         if (!titulo || !iframeRaw) {
-          alert("Por favor completá el título y el código embed del video.");
+          showToast("Por favor completá el título y el código embed del video.");
           return;
         }
 
         // Extraer el src del iframe
         const srcMatch = iframeRaw.match(/src=["']([^"']+)["']/i);
         if (!srcMatch) {
-          alert("No se encontró una URL válida en el código iframe. Asegurate de pegar el iframe completo de YouTube.");
+          showToast("No se encontró una URL válida en el código iframe. Asegurate de pegar el iframe completo de YouTube.");
           return;
         }
         const link = srcMatch[1];
@@ -518,12 +518,12 @@
           });
 
           if (response.ok) {
-            alert("Video cargado correctamente.");
+            showToast("Video cargado correctamente.");
             closeModalVideo();
             renderVideosAdmin();
           } else {
             const data = await response.json();
-            alert("Error: " + data.message);
+            showToast("Error: " + data.message);
           }
         } catch (error) {
           console.error("Error guardando video:", error);

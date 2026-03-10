@@ -621,7 +621,7 @@
         const confirmPass = document.getElementById("profile-pass-confirm").value;
 
         if (newPass && newPass !== confirmPass) {
-          alert("Las contraseñas no coinciden.");
+          showToast("Las contraseñas no coinciden.");
           return;
         }
 
@@ -632,9 +632,9 @@
           // Solo actualizamos localmente para la sesión actual.
           
           if (newPass) {
-            alert("Para cambiar tu contraseña, usá la opción 'Olvidé mi contraseña' en el login por seguridad.");
+            showToast("Para cambiar tu contraseña, usá la opción 'Olvidé mi contraseña' en el login por seguridad.");
           } else {
-            alert("¡Nombre actualizado correctamente!");
+            showToast("¡Nombre actualizado correctamente!");
           }
           
           initPanel();

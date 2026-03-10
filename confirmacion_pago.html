@@ -164,7 +164,7 @@
         const dni = document.getElementById("pago-dni").value;
 
         if (!email || !nombre || !dni) {
-          alert(
+          showToast(
             "Por favor, completá todos los campos para generar el mensaje de WhatsApp.",
           );
           return;
@@ -182,5 +182,6 @@
         document.getElementById("step-success").style.display = "flex";
       }
     </script>
+    <script src="app.js"></script>
   </body>
 </html>
