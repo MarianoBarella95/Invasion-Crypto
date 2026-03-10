@@ -1,9 +1,13 @@
 // CONFIGURACIÓN API
 var API_URL = "https://invasioncrypto-api.vercel.app";
 
+// Variable en memoria como fallback cuando localStorage es bloqueado (Firefox)
+var _memToken = null;
+
 // FUNCIÓN AUXILIAR PARA LLAMADAS A LA API
 async function apiFetch(endpoint, options = {}) {
-  const token = localStorage.getItem("authToken");
+  // Leer token de localStorage primero, si no hay usar el de memoria
+  const token = localStorage.getItem("authToken") || _memToken;
   const headers = {
     "Content-Type": "application/json",
     ...options.headers,

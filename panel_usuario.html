@@ -360,6 +360,8 @@
           localStorage.setItem('userRole', urlRole || '');
           localStorage.setItem('authToken', urlToken || '');
           localStorage.setItem('isLoggedIn', 'true');
+          // Guardar token también en memoria global como fallback para Firefox
+          if (urlToken) _memToken = decodeURIComponent(urlToken);
           window.history.replaceState({}, document.title, 'panel_usuario.html');
         }
 
