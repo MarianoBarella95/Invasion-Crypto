@@ -346,6 +346,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="app.js"></script>
     <script>
+      // Variables globales del panel (se leen de localStorage/URL al iniciar)
+      let _userStatus = "denegado";
+
       // Cargar Datos del Usuario al iniciar
       async function initPanel() {
         // Leer params de URL como fallback si el localStorage fue bloqueado (Firefox)
@@ -377,7 +380,9 @@
         }
 
         const userName = localStorage.getItem("userName") || "Usuario";
+        const userEmail = localStorage.getItem("userEmail") || "";
         const userStatus = localStorage.getItem("userStatus") || "denegado";
+        _userStatus = userStatus; // guardar en variable global para renderVideos
         const isPremium = userStatus === "aprobado";
         
         // UI Header
@@ -421,7 +426,7 @@
         const grid = document.getElementById("video-grid");
         grid.innerHTML = "<p style='padding: 2rem; color: #666;'>Cargando videos...</p>";
 
-        const isPremium = userStatus === "aprobado";
+        const isPremium = _userStatus === "aprobado";
 
         try {
           // Determinar qué endpoint llamar según el filtro
