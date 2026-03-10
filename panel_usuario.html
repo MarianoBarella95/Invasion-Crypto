@@ -184,6 +184,20 @@
           </div>
         </section>
 
+        <!-- SECTION: VIDEOPLAYER -->
+        <section id="section-videoplayer" class="dashboard-section">
+          <button class="btn-dashboard" style="margin-bottom: 1.5rem; background-color: transparent; border: 1px solid #9933cc; color: #9933cc;" onclick="switchSection('videos')">
+            ⬅ Volver a Videos
+          </button>
+          <div style="background: #000; border-radius: 8px; overflow: hidden; margin-bottom: 1.5rem;">
+            <div style="position:relative; padding-top:56.25%;">
+              <div id="yt-player-container" style="position:absolute; inset:0; background:#000;"></div>
+            </div>
+          </div>
+          <h2 id="video-player-title" style="font-family: 'Fira Sans'; margin-bottom: 1rem; color: #9933cc; font-size: 2rem;">Título</h2>
+          <p id="video-player-desc" style="color: #444; font-size: 1.1rem; line-height: 1.6; white-space: pre-wrap;"></p>
+        </section>
+
         <!-- SECTION: GRUPOS -->
         <section id="section-grupos" class="dashboard-section">
           <h2
@@ -499,15 +513,49 @@
                           <button onclick="openUpgradeModal()" style="padding:0.3rem 0.6rem; font-size: 0.7rem; background:#9933cc; border:none; color:white; border-radius:4px; margin-top:0.5rem; cursor:pointer;">Mejorar Plan</button>
                       </div>
                   ` : `
-                      <iframe
-                        src="${embedUrl}"
-                        title="${v.titulo}"
-                        frameborder="0"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        referrerpolicy="strict-origin-when-cross-origin"
-                        allowfullscreen
-                        style="width:100%; height:100%; position:absolute; top:0; left:0;"
-                      ></iframe>
+                      ${ (function(){
+                        // Si logramos extraer el videoId, mostramos un thumbnail clicable que abre el modal del player
+                        const vidMatch = (function(raw){
+                          try{
+                            let id = null;
+                            const embedMatch = raw.match(/youtube(?:-nocookie)?\.com\/embed\/([a-zA-Z0-9_-]+)/);
+                            if (embedMatch) id = embedMatch[1];
+                            if (!id) {
+                              const watchMatch = raw.match(/[?&]v=([a-zA-Z0-9_-]+)/);
+                              if (watchMatch) id = watchMatch[1];
+                            }
+                            if (!id) {
+                              const shortMatch = raw.match(/youtu\.be\/([a-zA-Z0-9_-]+)/);
+                              if (shortMatch) id = shortMatch[1];
+                            }
+                            return id;
+                          }catch(e){ return null; }
+                        })(v.link || '');
+
+                        if (vidMatch) {
+                          return `
+                            <div class="video-thumb" style="cursor:pointer; position:relative; padding-top:56.25%; background:#000;">
+                              <img src="https://img.youtube.com/vi/${vidMatch}/hqdefault.jpg" alt="${v.titulo}" style="position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover;" />
+                              <div style="position:absolute; left:50%; top:50%; transform:translate(-50%, -50%); z-index:5; font-size:3rem; color:rgba(255,255,255,0.95); text-shadow:0 2px 8px rgba(0,0,0,0.6);">▶</div>
+                              <button onclick="openVideoPlayer('youtube_id', '${vidMatch}', ${JSON.stringify(v.titulo).replace(/"/g, '&quot;')}, ${JSON.stringify(v.descripcion || '').replace(/"/g, '&quot;')}); event.stopPropagation();" style="position:absolute; inset:0; width:100%; height:100%; background:transparent; border:none; padding:0; margin:0; cursor:pointer; opacity:0">Open</button>
+                            </div>
+                          `;
+                        }
+
+                        // Fallback: si no hay videoId, devolver iframe con embedUrl
+                        return `
+                          <iframe
+                            src="${embedUrl}"
+                            title="${v.titulo}"
+                            frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            referrerpolicy="strict-origin-when-cross-origin"
+                            allowfullscreen
+                            style="width:100%; height:100%; position:absolute; top:0; left:0; pointer-events:none;"
+                          ></iframe>
+                          <button onclick="openVideoPlayer('embed_url', '${embedUrl}', ${JSON.stringify(v.titulo).replace(/"/g, '&quot;')}, ${JSON.stringify(v.descripcion || '').replace(/"/g, '&quot;')}); event.stopPropagation();" style="position:absolute; inset:0; width:100%; height:100%; background:transparent; border:none; padding:0; margin:0; cursor:pointer; z-index:10;"></button>
+                        `;
+                      })() }
                   `}
                 </div>
                 <div class="video-info">
@@ -552,8 +600,14 @@
           videos: "Videos",
           grupos: "Grupos de WhatsApp",
           perfil: "Mi Perfil",
+          videoplayer: "Reproduciendo Video",
         };
         document.getElementById("page-title").innerText = titleMap[sectionName] || "";
+
+        if (sectionName !== 'videoplayer') {
+            const container = document.getElementById('yt-player-container');
+            if (container) container.innerHTML = '';
+        }
 
         // Cerrar sidebar en móvil al navegar
         if (window.innerWidth <= 992) {
@@ -629,5 +683,39 @@
 
       initPanel();
     </script>
+      <script>
+        // Sistema de reproducción de videos nativo
+        function openVideoPlayer(type, source, title, description) {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+          switchSection('videoplayer');
+          
+          document.getElementById('video-player-title').innerText = title;
+          document.getElementById('video-player-desc').innerText = description;
+          
+          const container = document.getElementById('yt-player-container');
+          
+          if (type === 'youtube_id') {
+            // Embebido ultralimpio: Sin jsapi, sin autoplay forzado, y SIN pedir permisos extra de hardware (allow="...")
+            // Esto elimina absolutamente todos los errores '[Violation] Permissions policy' en la consola.
+            container.innerHTML = `<iframe
+              src="https://www.youtube.com/embed/${source}"
+              frameborder="0"
+              referrerpolicy="strict-origin-when-cross-origin"
+              allowfullscreen
+              style="width:100%; height:100%; position:absolute; top:0; left:0;"
+            ></iframe>`;
+          } else {
+            // Falso/Otro embed URL limpio
+            container.innerHTML = `<iframe
+              src="${source}"
+              title="${title.replace(/"/g, '&quot;')}"
+              frameborder="0"
+              referrerpolicy="strict-origin-when-cross-origin"
+              allowfullscreen
+              style="width:100%; height:100%; position:absolute; top:0; left:0;"
+            ></iframe>`;
+          }
+        }
+      </script>
   </body>
 </html>
