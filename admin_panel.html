@@ -255,13 +255,27 @@
 
     <script>
       async function initAdmin() {
-          const userRole = localStorage.getItem("userRole");
-          const hasToken = localStorage.getItem("authToken");
+          // Leer params de URL como fallback si el localStorage fue bloqueado
+          const urlParams = new URLSearchParams(window.location.search);
+          const urlRole = urlParams.get('role');
+          const urlToken = urlParams.get('token');
+
+          if (urlRole || urlToken) {
+            localStorage.setItem('userRole', urlRole || '');
+            localStorage.setItem('authToken', urlToken || '');
+            localStorage.setItem('isLoggedIn', 'true');
+            // Limpiar params de URL por seguridad
+            window.history.replaceState({}, document.title, 'admin_panel.html');
+          }
+
+          const userRole = localStorage.getItem("userRole") || urlRole;
+          const hasToken = localStorage.getItem("authToken") || urlToken;
 
           const adminDebug = `[DEBUG admin_panel]
 userRole: ${userRole}
 hasToken: ${hasToken ? hasToken.substring(0,20)+'...' : 'MISSING'}
-isLoggedIn: ${localStorage.getItem('isLoggedIn')}`;
+urlRole: ${urlRole}
+urlToken: ${urlToken ? urlToken.substring(0,20)+'...' : 'MISSING'}`;
           console.log(adminDebug);
           alert(adminDebug);
 

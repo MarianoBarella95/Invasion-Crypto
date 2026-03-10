@@ -230,10 +230,12 @@ document.addEventListener('DOMContentLoaded', () => {
           setTimeout(() => {
             const finalRole = localStorage.getItem("userRole") || role;
             console.log("REDIRECTING TO:", finalRole === "admin" ? "admin_panel.html" : "panel_usuario.html");
+            // Pasar token y rol como params de URL como fallback contra bloqueo de localStorage
+            const encodedToken = encodeURIComponent(token || "");
             if (finalRole === "admin") {
-              window.location.replace("admin_panel.html"); // Usar replace para evitar historial sucio
+              window.location.replace(`admin_panel.html?role=${finalRole}&token=${encodedToken}`);
             } else {
-              window.location.replace("panel_usuario.html");
+              window.location.replace(`panel_usuario.html?role=${finalRole}&token=${encodedToken}`);
             }
           }, 1000);
         } else {

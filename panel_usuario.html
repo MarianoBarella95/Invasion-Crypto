@@ -348,13 +348,27 @@
     <script>
       // Cargar Datos del Usuario al iniciar
       async function initPanel() {
-        const isLoggedIn = localStorage.getItem("isLoggedIn");
-        const authToken = localStorage.getItem("authToken");
+        // Leer params de URL como fallback si el localStorage fue bloqueado (Firefox)
+        const urlParams = new URLSearchParams(window.location.search);
+        const urlRole = urlParams.get('role');
+        const urlToken = urlParams.get('token');
+
+        if (urlRole || urlToken) {
+          localStorage.setItem('userRole', urlRole || '');
+          localStorage.setItem('authToken', urlToken || '');
+          localStorage.setItem('isLoggedIn', 'true');
+          window.history.replaceState({}, document.title, 'panel_usuario.html');
+        }
+
+        const isLoggedIn = localStorage.getItem("isLoggedIn") || (urlToken ? 'true' : null);
+        const authToken = localStorage.getItem("authToken") || urlToken;
+        const userRole = localStorage.getItem("userRole") || urlRole;
 
         const debugInfo = `[DEBUG panel_usuario]
 isLoggedIn: ${isLoggedIn}
 authToken: ${authToken ? authToken.substring(0,20)+'...' : 'MISSING'}
-userRole: ${localStorage.getItem('userRole')}`;
+userRole: ${userRole}
+urlRole: ${urlRole}`;
         console.log(debugInfo);
         alert(debugInfo);
 
@@ -365,7 +379,6 @@ userRole: ${localStorage.getItem('userRole')}`;
             return;
         }
 
-        const userRole = localStorage.getItem("userRole");
         if (userRole && String(userRole).toLowerCase() === "admin") {
           window.location.href = "admin_panel.html";
           return;
