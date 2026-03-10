@@ -100,6 +100,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const email = emailInput.value;
     const password = passwordInput.value;
+    
+    // Limpiar restos de sesiones previas para evitar conflictos de roles
+    localStorage.removeItem("userRole");
+    localStorage.removeItem("userStatus");
+    localStorage.removeItem("authToken");
 
     if (email && password) {
       try {
@@ -117,19 +122,37 @@ document.addEventListener('DOMContentLoaded', () => {
           localStorage.setItem("userEmail", email);
           localStorage.setItem("userName", data.user ? data.user.name : "Usuario");
 
-          // Detectar rol de forma hiper-robusta (considerando variantes del backend)
+          // Detectar rol de forma ultra-robusta buscando en todo el objeto de respuesta
           let roleRaw = "user";
-          if (data.isAdmin === true || data.isAdmin === "true" || (data.user && (data.user.isAdmin === true || data.user.isAdmin === "true"))) roleRaw = "admin";
-          else if (data.is_admin === true || data.is_admin === "true" || (data.user && (data.user.is_admin === true || data.user.is_admin === "true"))) roleRaw = "admin";
-          else if (data.role_id == 1 || data.rol_id == 1 || (data.user && (data.user.role_id == 1 || data.user.rol_id == 1))) roleRaw = "admin";
-          else if (data.role) roleRaw = data.role;
-          else if (data.rol) roleRaw = data.rol;
-          else if (data.user && data.user.role) roleRaw = data.user.role;
-          else if (data.user && data.user.rol) roleRaw = data.user.rol;
-          else if (data.user && data.user.tipo) roleRaw = data.user.tipo;
 
-          const role = String(roleRaw).toLowerCase();
-          console.log("DETECTED ROLE FINAL:", role);
+          function searchRole(obj) {
+            if (!obj || typeof obj !== "object") return null;
+            
+            // 1. Buscar flags booleanos de admin
+            if (obj.isAdmin === true || obj.isAdmin === "true" || obj.is_admin === true || obj.is_admin === "true") return "admin";
+            
+            // 2. Buscar campos de rol/rol_id
+            const roleFields = ["role", "rol", "tipo", "role_id", "rol_id", "status", "roles", "user_role", "permission_level"];
+            for (let field of roleFields) {
+              if (obj[field]) {
+                const val = Array.isArray(obj[field]) ? String(obj[field][0]).toLowerCase() : String(obj[field]).toLowerCase();
+                if (val === "admin" || val === "1" || val === "administrador" || val === "superadmin") return "admin";
+                if (val === "user" || val === "usuario" || val === "cliente" || val === "0") return "user";
+              }
+            }
+
+            // 3. Búsqueda recursiva en sub-objetos (como data.user o data.data)
+            for (let key in obj) {
+              if (typeof obj[key] === "object") {
+                const found = searchRole(obj[key]);
+                if (found) return found;
+              }
+            }
+            return null;
+          }
+
+          roleRaw = searchRole(data) || "user";
+          const role = roleRaw.toLowerCase();
 
           localStorage.setItem("userRole", role);
           localStorage.setItem("userStatus", data.user ? (data.user.estado || data.user.status) : "denegado");
