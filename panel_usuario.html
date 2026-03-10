@@ -335,6 +335,10 @@
                 <button class="btn-dashboard" style="height: 60px; font-size: 1.1rem; background-color: #009ee3;" onclick="payWithMP()">
                     Pagar con Mercado Pago 💳
                 </button>
+                <button class="btn-dashboard" style="height: 60px; font-size: 1.1rem; background-color: #ffffff; color: #333; border: 1px solid #ccc;" onclick="payWithPayPal()">
+                    <img src="https://cdn-icons-png.flaticon.com/512/174/174861.png" style="width: 20px; vertical-align: middle; margin-right: 5px;">
+                    Transferencia / PayPal
+                </button>
                 <button class="btn-dashboard" style="height: 60px; font-size: 1.1rem; background-color: #25d366;" onclick="payWithWA()">
                     Solicitar otros medios (WhatsApp) 💬
                 </button>
@@ -349,7 +353,7 @@
         <div class="carrito-contenido" style="max-width: 450px; text-align: center;">
             <div style="font-size: 4rem; color: #25d366; margin-bottom: 1rem;">🎯</div>
             <h3 style="margin-bottom: 1rem;">¡Casi listo!</h3>
-            <p style="margin-bottom: 1.5rem;">Una vez realizado el pago en Mercado Pago, por favor enviá el <strong>comprobante</strong> al siguiente número para activar tu cuenta:</p>
+            <p style="margin-bottom: 1.5rem;">Una vez realizado el pago, por favor enviá el <strong>comprobante</strong> al siguiente número para activar tu cuenta:</p>
             <a href="https://wa.me/5491136542795?text=Hola!%20Acabo%20de%20realizar%20el%20pago%20Premium.%20Adjunto%20comprobante." target="_blank" class="btn-dashboard" style="background-color: #25d366; display: block; text-decoration: none;">
                 Enviar comprobante por WhatsApp
             </a>
@@ -615,7 +619,7 @@
         }
       }
 
-      function updateProfile() {
+      async function updateProfile() {
         const newName = document.getElementById("profile-name").value;
         const newPass = document.getElementById("profile-pass").value;
         const confirmPass = document.getElementById("profile-pass-confirm").value;
@@ -627,12 +631,27 @@
 
         if (newName) {
           localStorage.setItem("userName", newName);
-          // Nota: Aquí deberíamos llamar a un endpoint para actualizar el perfil
-          // pero el backend documentado no incluye uno por ahora.
-          // Solo actualizamos localmente para la sesión actual.
           
           if (newPass) {
-            showToast("Para cambiar tu contraseña, usá la opción 'Olvidé mi contraseña' en el login por seguridad.");
+            try {
+               const email = localStorage.getItem("userEmail");
+               // Pide el cambio al backend
+               const response = await apiFetch("/api/auth/reset-password", {
+                 method: "POST",
+                 body: JSON.stringify({ email: email, newPassword: newPass, password: newPass })
+               });
+               
+               if (response.ok) {
+                 showToast("¡Perfil y contraseña actualizados correctamente!");
+                 document.getElementById("profile-pass").value = "";
+                 document.getElementById("profile-pass-confirm").value = "";
+               } else {
+                 showToast("No se pudo actualizar la contraseña. Posiblemente requiere enviar Mail de reseteo.");
+               }
+            } catch (error) {
+               console.error("Error al actualizar contraseña:", error);
+               showToast("Error de red al actualizar contraseña.");
+            }
           } else {
             showToast("¡Nombre actualizado correctamente!");
           }
@@ -674,6 +693,12 @@
       function payWithWA() {
         window.open("https://wa.me/5491136542795?text=Hola!%20Quiero%20acceder%20al%20plan%20Premium%20por%20otros%20medios.", '_blank');
         closeUpgradeModal();
+      }
+
+      function payWithPayPal() {
+        closeUpgradeModal();
+        window.open("https://www.paypal.com/paypalme/sempergy?country.x=AR&locale.x=en_US", '_blank');
+        document.getElementById("modalMPConfirm").classList.add("active");
       }
 
       function logout() {
