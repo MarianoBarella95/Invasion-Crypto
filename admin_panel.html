@@ -258,7 +258,15 @@
           const userRole = localStorage.getItem("userRole");
           const hasToken = localStorage.getItem("authToken");
 
+          const adminDebug = `[DEBUG admin_panel]
+userRole: ${userRole}
+hasToken: ${hasToken ? hasToken.substring(0,20)+'...' : 'MISSING'}
+isLoggedIn: ${localStorage.getItem('isLoggedIn')}`;
+          console.log(adminDebug);
+          alert(adminDebug);
+
           if (!userRole || String(userRole).toLowerCase() !== "admin" || !hasToken) {
+              console.error("ACCESS DENIED - role is:", userRole, "token exists:", !!hasToken);
               localStorage.removeItem("isLoggedIn");
               localStorage.removeItem("authToken");
               localStorage.removeItem("userRole");
