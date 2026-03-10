@@ -8,6 +8,7 @@ var _memToken = null;
 async function apiFetch(endpoint, options = {}) {
   // Leer token de localStorage primero, si no hay usar el de memoria
   const token = localStorage.getItem("authToken") || _memToken;
+  console.log(`[apiFetch] ${endpoint} | token: ${token ? token.substring(0,30)+'...' : 'NULL'} | memToken: ${_memToken ? _memToken.substring(0,30)+'...' : 'NULL'}`);
   const headers = {
     "Content-Type": "application/json",
     ...options.headers,

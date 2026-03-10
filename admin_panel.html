@@ -272,7 +272,8 @@
             localStorage.setItem('authToken', urlToken || '');
             localStorage.setItem('isLoggedIn', 'true');
             // Guardar token también en memoria global como fallback para Firefox
-            if (urlToken) _memToken = decodeURIComponent(urlToken);
+            // URLSearchParams.get() ya decodifica automáticamente, no hace falta decodeURIComponent
+            if (urlToken) _memToken = urlToken;
             // Limpiar params de URL por seguridad
             window.history.replaceState({}, document.title, 'admin_panel.html');
           }
