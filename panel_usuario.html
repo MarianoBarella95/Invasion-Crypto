@@ -359,6 +359,12 @@
             return;
         }
 
+        const userRole = localStorage.getItem("userRole");
+        if (userRole && String(userRole).toLowerCase() === "admin") {
+          window.location.href = "admin_panel.html";
+          return;
+        }
+
         const isPremium = userStatus === "aprobado";
         
         // UI Header

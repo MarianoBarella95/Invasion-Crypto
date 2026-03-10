@@ -117,12 +117,19 @@ document.addEventListener('DOMContentLoaded', () => {
           localStorage.setItem("authToken", token);
           localStorage.setItem("userEmail", email);
           localStorage.setItem("userName", data.user ? data.user.name : "Usuario");
-          localStorage.setItem("userRole", data.user ? data.user.role : "user");
+          // Detectar rol de forma hiper-robusta (considerando variantes del backend)
+          let roleRaw = "user";
+          if (data.user && data.user.role) roleRaw = data.user.role;
+          else if (data.user && data.user.rol) roleRaw = data.user.rol;
+          else if (data.role) roleRaw = data.role;
+          else if (data.rol) roleRaw = data.rol;
+
+          const role = String(roleRaw).toLowerCase();
+          localStorage.setItem("userRole", role);
           localStorage.setItem("userStatus", data.user ? data.user.estado : "denegado");
           
           showToast("Login exitoso.");
           setTimeout(() => {
-            const role = data.user ? String(data.user.role).toLowerCase() : "user";
             if (role === "admin") {
               window.location.href = "admin_panel.html";
             } else {
