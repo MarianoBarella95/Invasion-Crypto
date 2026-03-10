@@ -347,13 +347,12 @@
     <script src="app.js"></script>
     <script>
       // Cargar Datos del Usuario al iniciar
-      const userEmail = localStorage.getItem("userEmail");
-      const userName = localStorage.getItem("userName");
-      const userStatus = localStorage.getItem("userStatus"); // 'aprobado', 'denegado', 'suspendido'
-
       async function initPanel() {
-        if (!localStorage.getItem("isLoggedIn") || !localStorage.getItem("authToken")) {
-            // Si no hay sesión o falta el token (sesión vieja), redirigir
+        const isLoggedIn = localStorage.getItem("isLoggedIn");
+        const authToken = localStorage.getItem("authToken");
+
+        if (!isLoggedIn || !authToken) {
+            console.warn("Sesión no detectada. Redirigiendo...");
             localStorage.removeItem("isLoggedIn");
             window.location.href = "index.html";
             return;
@@ -365,13 +364,21 @@
           return;
         }
 
+        const userName = localStorage.getItem("userName") || "Usuario";
+        const userStatus = localStorage.getItem("userStatus") || "denegado";
         const isPremium = userStatus === "aprobado";
         
         // UI Header
-        document.getElementById("user-name-display").textContent = userName;
-        document.getElementById("user-avatar").textContent = userName.charAt(0).toUpperCase();
-        document.getElementById("user-status").textContent = isPremium ? "✅ Plan Premium" : "🆓 Plan Free";
-        document.getElementById("user-status").className = isPremium ? "badge-active" : "badge-free";
+        const displayElem = document.getElementById("user-name-display");
+        const avatarElem = document.getElementById("user-avatar");
+        const statusElem = document.getElementById("user-status");
+
+        if (displayElem) displayElem.textContent = userName;
+        if (avatarElem) avatarElem.textContent = userName.charAt(0).toUpperCase();
+        if (statusElem) {
+          statusElem.textContent = isPremium ? "✅ Plan Premium" : "🆓 Plan Free";
+          statusElem.className = isPremium ? "badge-active" : "badge-free";
+        }
 
         // UI Home
         document.getElementById("welcome-msg").textContent = `¡Hola ${userName}, bienvenido al Panel!`;

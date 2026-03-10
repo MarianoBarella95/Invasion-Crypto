@@ -117,10 +117,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (response.ok) {
           localStorage.setItem("isLoggedIn", "true");
-          const token = data.token || data.accessToken || data.jwt;
-          localStorage.setItem("authToken", token);
+          
+          function searchDeep(obj, keys) {
+            if (!obj || typeof obj !== "object") return null;
+            for (let key of keys) {
+              if (obj[key]) return obj[key];
+            }
+            for (let key in obj) {
+              if (typeof obj[key] === "object") {
+                const found = searchDeep(obj[key], keys);
+                if (found) return found;
+              }
+            }
+            return null;
+          }
+
+          // 1. Buscar Token de forma ultra-robusta
+          const token = searchDeep(data, ["token", "accessToken", "jwt", "access", "key", "idToken"]);
+          localStorage.setItem("authToken", token || "");
           localStorage.setItem("userEmail", email);
-          localStorage.setItem("userName", data.user ? data.user.name : "Usuario");
+          
+          // 2. Buscar Nombre
+          const userName = searchDeep(data, ["name", "nombre", "username", "display_name", "fullName"]) || "Usuario";
+          localStorage.setItem("userName", userName);
 
           // Detectar rol de forma ultra-robusta buscando en todo el objeto de respuesta
           let roleRaw = "user";
@@ -157,9 +176,18 @@ document.addEventListener('DOMContentLoaded', () => {
           localStorage.setItem("userRole", role);
           localStorage.setItem("userStatus", data.user ? (data.user.estado || data.user.status) : "denegado");
           
-          showToast("Login exitoso.");
+          showToast("Login exitoso. Redirigiendo...");
+          
+          // Debugging final antes de redirigir
+          console.log("FINAL CHECKS:", {
+            tokenSaved: localStorage.getItem("authToken"),
+            roleSaved: localStorage.getItem("userRole"),
+            isLoggedIn: localStorage.getItem("isLoggedIn")
+          });
+
           setTimeout(() => {
-            if (role === "admin") {
+            const finalRole = localStorage.getItem("userRole") || role;
+            if (finalRole === "admin") {
               window.location.href = "admin_panel.html";
             } else {
               window.location.href = "panel_usuario.html";
