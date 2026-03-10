@@ -454,22 +454,33 @@
               const card = document.createElement("div");
               card.className = "video-card";
               
-              // Normalizar URL de YouTube al formato embed limpio
+              // Normalizar URL de YouTube al formato embed limpio usando youtube-nocookie.com
+              // (soluciona Error 153 en Firefox y navegadores con tracking protection)
               function getEmbedUrl(rawUrl) {
                 if (!rawUrl) return null;
                 try {
-                  // Si ya es un embed URL, extraer solo el video ID para limpiar params raros
-                  const embedMatch = rawUrl.match(/youtube\.com\/embed\/([a-zA-Z0-9_-]+)/);
-                  if (embedMatch) return `https://www.youtube.com/embed/${embedMatch[1]}`;
-                  
-                  // Convertir watch?v= al formato embed
-                  const watchMatch = rawUrl.match(/[?&]v=([a-zA-Z0-9_-]+)/);
-                  if (watchMatch) return `https://www.youtube.com/embed/${watchMatch[1]}`;
-                  
-                  // Convertir youtu.be/ID al formato embed
-                  const shortMatch = rawUrl.match(/youtu\.be\/([a-zA-Z0-9_-]+)/);
-                  if (shortMatch) return `https://www.youtube.com/embed/${shortMatch[1]}`;
-                  
+                  // Extraer el Video ID de cualquier formato de URL de YouTube
+                  let videoId = null;
+
+                  // Formato embed: youtube.com/embed/ID o youtube-nocookie.com/embed/ID
+                  const embedMatch = rawUrl.match(/youtube(?:-nocookie)?\.com\/embed\/([a-zA-Z0-9_-]+)/);
+                  if (embedMatch) videoId = embedMatch[1];
+
+                  // Formato watch: youtube.com/watch?v=ID
+                  if (!videoId) {
+                    const watchMatch = rawUrl.match(/[?&]v=([a-zA-Z0-9_-]+)/);
+                    if (watchMatch) videoId = watchMatch[1];
+                  }
+
+                  // Formato corto: youtu.be/ID
+                  if (!videoId) {
+                    const shortMatch = rawUrl.match(/youtu\.be\/([a-zA-Z0-9_-]+)/);
+                    if (shortMatch) videoId = shortMatch[1];
+                  }
+
+                  // Usar youtube-nocookie.com para evitar el Error 153 por tracking/cookies
+                  if (videoId) return `https://www.youtube-nocookie.com/embed/${videoId}`;
+
                   return rawUrl; // Devolver tal cual si no se reconoce el formato
                 } catch(e) { return rawUrl; }
               }
