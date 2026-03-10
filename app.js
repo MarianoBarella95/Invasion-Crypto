@@ -122,7 +122,8 @@ document.addEventListener('DOMContentLoaded', () => {
           
           showToast("Login exitoso.");
           setTimeout(() => {
-            if (data.user && data.user.role === "admin") {
+            const role = data.user ? String(data.user.role).toLowerCase() : "user";
+            if (role === "admin") {
               window.location.href = "admin_panel.html";
             } else {
               window.location.href = "panel_usuario.html";

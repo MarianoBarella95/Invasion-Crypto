@@ -17,7 +17,7 @@
       <div class="auth-box" style="border: 2px solid #555">
         <!-- Login Form Admin -->
         <form
-          id="AdminLoginForm"
+          id="loginForm"
           class="auth-form active"
           style="padding-bottom: 2rem"
         >
@@ -30,19 +30,19 @@
           </div>
           <h2 class="auth-title" style="color: #333">Acceso Administrador</h2>
           <div class="input-group">
-            <label for="admin-email">Email</label>
+            <label for="email">Email</label>
             <input
               type="email"
-              id="admin-email"
+              id="email"
               required
               placeholder="admin@invasioncrypto.com"
             />
           </div>
           <div class="input-group">
-            <label for="admin-password">Contraseña</label>
+            <label for="password">Contraseña</label>
             <input
               type="password"
-              id="admin-password"
+              id="password"
               required
               placeholder="********"
             />
@@ -69,15 +69,7 @@
       </p>
     </div>
 
-    <script>
-      document
-        .getElementById("AdminLoginForm")
-        .addEventListener("submit", function (e) {
-          e.preventDefault();
-          // Simular login admin exitoso
-          localStorage.setItem("isAdminLoggedIn", "true");
-          window.location.href = "admin_panel.html";
-        });
-    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="app.js"></script>
   </body>
 </html>
