@@ -228,8 +228,15 @@
                 <input type="text" id="vid-titulo" required style="padding: 0.75rem; border: 1px solid #ccc; width: 100%; border-radius: 4px;"/>
               </div>
               <div class="input-group">
-                <label style="font-size: 0.9rem; color: #555;">URL de YouTube (Embed)</label>
-                <input type="text" id="vid-url" required placeholder="https://www.youtube.com/embed/..." style="padding: 0.75rem; border: 1px solid #ccc; width: 100%; border-radius: 4px;"/>
+                <label style="font-size: 0.9rem; color: #555;">Código Embed del Video (iframe de YouTube)</label>
+                <textarea 
+                  id="vid-iframe" 
+                  rows="4" 
+                  required 
+                  placeholder='Pegá acá el código iframe de YouTube. Ej: &lt;iframe width=&quot;560&quot; src=&quot;https://www.youtube.com/embed/...&quot;&gt;&lt;/iframe&gt;'
+                  style="padding: 0.75rem; border: 1px solid #ccc; width: 100%; border-radius: 4px; font-size: 0.8rem; font-family: monospace;"
+                ></textarea>
+                <small style="color: #888; font-size: 0.75rem;">El sistema extrae automáticamente la URL del iframe.</small>
               </div>
               <div class="input-group">
                 <label style="font-size: 0.9rem; color: #555;">Descripción</label>
@@ -478,15 +485,23 @@
       }
 
       async function guardarVideo() {
-        const titulo = document.getElementById("vid-titulo").value;
-        const link = document.getElementById("vid-url").value;
-        const descripcion = document.getElementById("vid-desc").value;
+        const titulo = document.getElementById("vid-titulo").value.trim();
+        const iframeRaw = document.getElementById("vid-iframe").value.trim();
+        const descripcion = document.getElementById("vid-desc").value.trim();
         const isPremium = document.getElementById("vid-isPremium").checked;
 
-        if (!titulo || !link) {
-          alert("Por favor completá los campos obligatorios.");
+        if (!titulo || !iframeRaw) {
+          alert("Por favor completá el título y el código embed del video.");
           return;
         }
+
+        // Extraer el src del iframe
+        const srcMatch = iframeRaw.match(/src=["']([^"']+)["']/i);
+        if (!srcMatch) {
+          alert("No se encontró una URL válida en el código iframe. Asegurate de pegar el iframe completo de YouTube.");
+          return;
+        }
+        const link = srcMatch[1];
 
         try {
           const response = await apiFetch("/api/videos", {
