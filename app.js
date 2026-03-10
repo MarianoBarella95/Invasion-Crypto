@@ -1,5 +1,5 @@
 // CONFIGURACIÓN API
-const API_URL = "https://invasioncrypto-api.vercel.app";
+var API_URL = "https://invasioncrypto-api.vercel.app";
 
 // FUNCIÓN AUXILIAR PARA LLAMADAS A LA API
 async function apiFetch(endpoint, options = {}) {
