@@ -141,40 +141,60 @@ document.addEventListener('DOMContentLoaded', () => {
           const userName = searchDeep(data, ["name", "nombre", "username", "display_name", "fullName"]) || "Usuario";
           localStorage.setItem("userName", userName);
 
-          // Detectar rol de forma ultra-robusta buscando en todo el objeto de respuesta
-          let roleRaw = "user";
-
-          function searchRole(obj) {
-            if (!obj || typeof obj !== "object") return null;
-            
-            // 1. Buscar flags booleanos de admin
-            if (obj.isAdmin === true || obj.isAdmin === "true" || obj.is_admin === true || obj.is_admin === "true") return "admin";
-            
-            // 2. Buscar campos de rol/rol_id
-            const roleFields = ["role", "rol", "tipo", "role_id", "rol_id", "status", "roles", "user_role", "permission_level"];
-            for (let field of roleFields) {
-              if (obj[field]) {
-                const val = Array.isArray(obj[field]) ? String(obj[field][0]).toLowerCase() : String(obj[field]).toLowerCase();
-                if (val === "admin" || val === "1" || val === "administrador" || val === "superadmin") return "admin";
-                if (val === "user" || val === "usuario" || val === "cliente" || val === "0") return "user";
-              }
+          // Función para decodificar JWT de forma segura
+          function parseJwt(token) {
+            try {
+              const base64Url = token.split('.')[1];
+              const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+              const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+              }).join(''));
+              return JSON.parse(jsonPayload);
+            } catch (e) {
+              return null;
             }
-
-            // 3. Búsqueda recursiva en sub-objetos (como data.user o data.data)
-            for (let key in obj) {
-              if (typeof obj[key] === "object") {
-                const found = searchRole(obj[key]);
-                if (found) return found;
-              }
-            }
-            return null;
           }
 
-          roleRaw = searchRole(data) || "user";
-          const role = roleRaw.toLowerCase();
+          const jwtPayload = parseJwt(token);
+          console.log("JWT Payload:", jwtPayload);
 
+          // Detectar rol de forma ultra-robusta
+          let roleRaw = "user";
+          
+          // 1. Prioridad: Lo que diga el JWT (es lo más oficial del backend)
+          if (jwtPayload && jwtPayload.role) roleRaw = jwtPayload.role;
+          else if (jwtPayload && jwtPayload.rol) roleRaw = jwtPayload.rol;
+          else if (jwtPayload && jwtPayload.isAdmin) roleRaw = "admin";
+          
+          // 2. Si no está en el JWT, buscar en el cuerpo de la respuesta (recursivo)
+          if (roleRaw === "user") {
+            function searchRole(obj) {
+              if (!obj || typeof obj !== "object") return null;
+              if (obj.isAdmin === true || obj.isAdmin === "true" || obj.is_admin === true || obj.is_admin === "true") return "admin";
+              const roleFields = ["role", "rol", "tipo", "role_id", "rol_id", "status", "roles", "user_role"];
+              for (let field of roleFields) {
+                if (obj[field]) {
+                  const val = Array.isArray(obj[field]) ? String(obj[field][0]).toLowerCase() : String(obj[field]).toLowerCase();
+                  if (val === "admin" || val === "1" || val === "administrador" || val === "superadmin") return "admin";
+                }
+              }
+              for (let key in obj) {
+                if (typeof obj[key] === "object") {
+                  const found = searchRole(obj[key]);
+                  if (found) return found;
+                }
+              }
+              return null;
+            }
+            roleRaw = searchRole(data) || "user";
+          }
+
+          const role = String(roleRaw).toLowerCase();
           localStorage.setItem("userRole", role);
-          localStorage.setItem("userStatus", data.user ? (data.user.estado || data.user.status) : "denegado");
+          
+          // Guardar estado (Premium/Free)
+          const stateRaw = searchDeep(data, ["estado", "status", "state"]) || (jwtPayload ? (jwtPayload.estado || jwtPayload.status) : "denegado");
+          localStorage.setItem("userStatus", stateRaw);
           
           showToast("Login exitoso. Redirigiendo...");
           
