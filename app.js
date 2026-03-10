@@ -1,4 +1,21 @@
-// DINÁMICA CARRITO
+// CONFIGURACIÓN API
+const API_URL = "https://invasioncrypto-api.vercel.app";
+
+// FUNCIÓN AUXILIAR PARA LLAMADAS A LA API
+async function apiFetch(endpoint, options = {}) {
+  const token = localStorage.getItem("authToken");
+  const headers = {
+    "Content-Type": "application/json",
+    ...options.headers,
+  };
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
+  }
+  return fetch(`${API_URL}${endpoint}`, {
+    ...options,
+    headers,
+  });
+}
 
 document.addEventListener('DOMContentLoaded', () => {
   // ELEMENTOS DEL MODAL LOGIN
@@ -15,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // FUNCIÓN PARA ACTUALIZAR UI DE USUARIO
   const updateUserUI = () => {
     const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
-    const userName = localStorage.getItem("userName") || localStorage.getItem("userEmail");
+    const userName = localStorage.getItem("userName");
 
     if (isLoggedIn && userControls) {
       userControls.style.display = "flex";
@@ -73,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
   // Manejo del Login Consolidado
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     const emailInput = document.getElementById("email");
     const passwordInput = document.getElementById("password");
@@ -84,22 +101,36 @@ document.addEventListener('DOMContentLoaded', () => {
     const password = passwordInput.value;
 
     if (email && password) {
-      // Simulación local
-      const users = JSON.parse(localStorage.getItem("users") || "[]");
-      const user = users.find(u => u.email === email && u.password === password);
+      try {
+        const response = await apiFetch("/api/auth/login", {
+          method: "POST",
+          body: JSON.stringify({ email, password })
+        });
 
-      if (user) {
-        localStorage.setItem("isLoggedIn", "true");
-        localStorage.setItem("userEmail", email);
-        localStorage.setItem("userName", user.name);
-        localStorage.setItem("isPremium", user.isPremium);
-        
-        showToast("Login exitoso.");
-        setTimeout(() => {
-          window.location.href = "panel_usuario.html";
-        }, 1000);
-      } else {
-        showToast("Email o contraseña incorrectos.");
+        const data = await response.json();
+
+        if (response.ok) {
+          localStorage.setItem("isLoggedIn", "true");
+          localStorage.setItem("authToken", data.token || data.accessToken);
+          localStorage.setItem("userEmail", email);
+          localStorage.setItem("userName", data.user ? data.user.name : "Usuario");
+          localStorage.setItem("userRole", data.user ? data.user.role : "user");
+          localStorage.setItem("userStatus", data.user ? data.user.estado : "denegado");
+          
+          showToast("Login exitoso.");
+          setTimeout(() => {
+            if (data.user && data.user.role === "admin") {
+              window.location.href = "admin_panel.html";
+            } else {
+              window.location.href = "panel_usuario.html";
+            }
+          }, 1000);
+        } else {
+          showToast(data.message || "Email o contraseña incorrectos.");
+        }
+      } catch (error) {
+        console.error("Error Login:", error);
+        showToast("Error de conexión con el servidor.");
       }
     } else {
       showToast("Por favor completá todos los campos.");
@@ -177,11 +208,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (email) {
         try {
-          const response = await fetch('https://invasioncrypto-api.vercel.app/api/auth/forgot-password', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
+          const response = await apiFetch("/api/auth/forgot-password", {
+            method: "POST",
             body: JSON.stringify({ email })
           });
 
@@ -252,34 +280,36 @@ document.addEventListener('DOMContentLoaded', () => {
       const password = document.getElementById("regPassword").value;
 
       if (name && email && password) {
-        // Simulación local para el flujo solicitado
-        let users = JSON.parse(localStorage.getItem("users") || "[]");
-        if (users.find(u => u.email === email)) {
-          showToast("El usuario ya existe.");
-          return;
-        }
+        try {
+          const response = await apiFetch("/api/auth/register", {
+            method: "POST",
+            body: JSON.stringify({ name, email, password })
+          });
 
-        const newUser = {
-          name,
-          email,
-          password,
-          isPremium: false,
-          isPending: false
-        };
-        users.push(newUser);
-        localStorage.setItem("users", JSON.stringify(users));
+          const data = await response.json();
 
-        showToast("Registro exitoso. Serás redirigido al login.");
-        
-        setTimeout(() => {
-          // Redirigir al login (en auth.html o donde se encuentre el form)
-          if (window.location.pathname.includes("auth.html")) {
-              overlayRegister.classList.remove("active");
-              overlayLogin.classList.add("active");
+          if (response.ok) {
+            showToast("Registro exitoso. Serás redirigido al login.");
+            setTimeout(() => {
+              // Redirigir al login (en auth.html o donde se encuentre el form)
+              if (window.location.pathname.includes("auth.html")) {
+                  if (typeof switchTab === 'function') {
+                    switchTab('login');
+                  } else {
+                    overlayRegister.classList.remove("active");
+                    overlayLogin.classList.add("active");
+                  }
+              } else {
+                  window.location.href = "auth.html?mode=login";
+              }
+            }, 2000);
           } else {
-              window.location.href = "auth.html?mode=login";
+            showToast(data.message || "Error al registrarse.");
           }
-        }, 2000);
+        } catch (error) {
+          console.error("Error Register:", error);
+          showToast("Error de conexión con el servidor.");
+        }
       } else {
         showToast("Por favor completá todos los campos.");
       }

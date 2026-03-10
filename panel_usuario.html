@@ -347,25 +347,25 @@
     <script>
       // Cargar Datos del Usuario al iniciar
       const userEmail = localStorage.getItem("userEmail");
-      const users = JSON.parse(localStorage.getItem("users") || "[]");
-      let currentUser = users.find(u => u.email === userEmail);
+      const userName = localStorage.getItem("userName");
+      const userStatus = localStorage.getItem("userStatus"); // 'aprobado', 'denegado', 'suspendido'
 
-      function initPanel() {
-        if (!currentUser) {
+      async function initPanel() {
+        if (!localStorage.getItem("isLoggedIn")) {
             window.location.href = "index.html";
             return;
         }
 
-        const isPremium = currentUser.isPremium;
+        const isPremium = userStatus === "aprobado";
         
         // UI Header
-        document.getElementById("user-name-display").textContent = currentUser.name;
-        document.getElementById("user-avatar").textContent = currentUser.name.charAt(0).toUpperCase();
+        document.getElementById("user-name-display").textContent = userName;
+        document.getElementById("user-avatar").textContent = userName.charAt(0).toUpperCase();
         document.getElementById("user-status").textContent = isPremium ? "✅ Plan Premium" : "🆓 Plan Free";
         document.getElementById("user-status").className = isPremium ? "badge-active" : "badge-free";
 
         // UI Home
-        document.getElementById("welcome-msg").textContent = `¡Hola ${currentUser.name}, bienvenido al Panel!`;
+        document.getElementById("welcome-msg").textContent = `¡Hola ${userName}, bienvenido al Panel!`;
         document.getElementById("subscription-msg").textContent = isPremium 
             ? "Tu suscripción PREMIUM está activa. Disfrutá de todo el contenido." 
             : "Estás en el plan FREE. Tenés acceso limitado a videos gratuitos.";
@@ -382,55 +382,73 @@
         }
 
         // Profile
-        document.getElementById("profile-name").value = currentUser.name;
-        document.getElementById("profile-email").value = currentUser.email;
+        document.getElementById("profile-name").value = userName;
+        document.getElementById("profile-email").value = userEmail;
 
         // Cargar Videos
-        renderVideos();
+        await renderVideos();
       }
 
-      function renderVideos(filter = 'all') {
-        const videos = JSON.parse(localStorage.getItem("videos") || "[]");
+      async function renderVideos(filter = 'all') {
         const grid = document.getElementById("video-grid");
-        grid.innerHTML = "";
+        grid.innerHTML = "<p style='padding: 2rem; color: #666;'>Cargando videos...</p>";
 
-        const isPremium = currentUser.isPremium;
+        const isPremium = userStatus === "aprobado";
 
-        videos.forEach(v => {
-            // Lógica de filtrado
-            if (filter === 'free' && v.isPremium) return;
-            if (filter === 'premium' && !v.isPremium) return;
+        try {
+          // Determinar qué endpoint llamar según el filtro
+          let endpoint = "/api/videos";
+          if (filter === 'free') endpoint = "/api/videos/free";
+          if (filter === 'premium') endpoint = "/api/videos/premium";
 
-            const card = document.createElement("div");
-            card.className = "video-card";
-            
-            // Si el video es premium y el usuario no, mostramos bloqueo
-            const isLocked = v.isPremium && !isPremium;
+          const response = await apiFetch(endpoint);
+          const data = await response.json();
 
-            card.innerHTML = `
-              <div class="video-container" style="position: relative;">
-                ${isLocked ? `
-                    <div style="position: absolute; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.8); z-index: 10; display:flex; flex-direction:column; justify-content:center; align-items:center; color:white;">
-                        <span style="font-size: 2rem;">🔒</span>
-                        <p style="font-size: 0.8rem; margin-top: 0.5rem;">Contenido PREMIUM</p>
-                        <button onclick="openUpgradeModal()" style="padding:0.3rem 0.6rem; font-size: 0.7rem; background:#9933cc; border:none; color:white; border-radius:4px; margin-top:0.5rem; cursor:pointer;">Mejorar Plan</button>
-                    </div>
-                ` : `
-                    <iframe
-                      src="${v.link}"
-                      title="YouTube video player"
-                      frameborder="0"
-                      allowfullscreen
-                    ></iframe>
-                `}
-              </div>
-              <div class="video-info">
-                <h3 class="video-title">${v.title} ${v.isPremium ? '<span style="color: #ffc107; font-size: 0.8rem;">(Premium)</span>' : ''}</h3>
-                <p class="video-desc">${v.detail}</p>
-              </div>
-            `;
-            grid.appendChild(card);
-        });
+          if (!response.ok) throw new Error(data.message || "Error al cargar videos");
+
+          const videos = data.videos || [];
+          grid.innerHTML = "";
+
+          if (videos.length === 0) {
+            grid.innerHTML = "<p style='padding: 2rem; color: #666;'>No hay videos disponibles en esta categoría.</p>";
+            return;
+          }
+
+          videos.forEach(v => {
+              const card = document.createElement("div");
+              card.className = "video-card";
+              
+              // Backend usa 'categoria' para 'free'/'premium'
+              const isLocked = v.categoria === 'premium' && !isPremium;
+
+              card.innerHTML = `
+                <div class="video-container" style="position: relative;">
+                  ${isLocked ? `
+                      <div style="position: absolute; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.8); z-index: 10; display:flex; flex-direction:column; justify-content:center; align-items:center; color:white;">
+                          <span style="font-size: 2rem;">🔒</span>
+                          <p style="font-size: 0.8rem; margin-top: 0.5rem;">Contenido PREMIUM</p>
+                          <button onclick="openUpgradeModal()" style="padding:0.3rem 0.6rem; font-size: 0.7rem; background:#9933cc; border:none; color:white; border-radius:4px; margin-top:0.5rem; cursor:pointer;">Mejorar Plan</button>
+                      </div>
+                  ` : `
+                      <iframe
+                        src="${v.link}"
+                        title="YouTube video player"
+                        frameborder="0"
+                        allowfullscreen
+                      ></iframe>
+                  `}
+                </div>
+                <div class="video-info">
+                  <h3 class="video-title">${v.titulo} ${v.categoria === 'premium' ? '<span style="color: #ffc107; font-size: 0.8rem;">(Premium)</span>' : ''}</h3>
+                  <p class="video-desc">${v.descripcion}</p>
+                </div>
+              `;
+              grid.appendChild(card);
+          });
+        } catch (error) {
+          console.error("Error al cargar videos:", error);
+          grid.innerHTML = `<p style='padding: 2rem; color: #ff0000;'>Error al conectar con el servidor: ${error.message}</p>`;
+        }
       }
 
       function filterVideos(type) {
@@ -481,27 +499,18 @@
           return;
         }
 
-        const users = JSON.parse(localStorage.getItem("users") || "[]");
-        const idx = users.findIndex(u => u.email === currentUser.email);
-
-        if (idx !== -1) {
-          users[idx].name = newName;
-          if (newPass) {
-            users[idx].password = newPass;
-          }
-          localStorage.setItem("users", JSON.stringify(users));
-          
-          // Actualizar datos en memoria
-          currentUser.name = newName;
+        if (newName) {
           localStorage.setItem("userName", newName);
+          // Nota: Aquí deberíamos llamar a un endpoint para actualizar el perfil
+          // pero el backend documentado no incluye uno por ahora.
+          // Solo actualizamos localmente para la sesión actual.
           
-          alert("¡Perfil actualizado con éxito!");
+          if (newPass) {
+            alert("Para cambiar tu contraseña, usá la opción 'Olvidé mi contraseña' en el login por seguridad.");
+          } else {
+            alert("¡Nombre actualizado correctamente!");
+          }
           
-          // Limpiar campos de contraseña
-          document.getElementById("profile-pass").value = "";
-          document.getElementById("profile-pass-confirm").value = "";
-          
-          // Refrescar UI (nombre en el dashboard, avatar, etc)
           initPanel();
         }
       }

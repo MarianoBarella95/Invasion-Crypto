@@ -252,121 +252,165 @@
     </div>
 
     <script>
-      function initAdmin() {
-          renderPendingUsers();
-          renderAllUsers();
-          renderVideosAdmin();
-      }
-
-      function renderPendingUsers() {
-          const users = JSON.parse(localStorage.getItem("users") || "[]");
-          const pending = users.filter(u => u.isPending && !u.isPremium);
-          const table = document.getElementById("pending-users-table");
-          table.innerHTML = "";
-
-          if (pending.length === 0) {
-              table.innerHTML = "<tr><td colspan='4' style='text-align:center; padding: 2rem;'>No hay solicitudes pendientes.</td></tr>";
+      async function initAdmin() {
+          // Verificar si es admin realmente (podríamos llamar a un /api/auth/profile o similar)
+          const userRole = localStorage.getItem("userRole");
+          if (userRole !== "admin") {
+              window.location.href = "index.html";
               return;
           }
 
-          pending.forEach(u => {
-              const tr = document.createElement("tr");
-              tr.innerHTML = `
-                  <td><strong>${u.name}</strong></td>
-                  <td>${u.email}</td>
-                  <td><span style="color: #ffc107;">Solicitó Premium</span></td>
-                  <td>
-                      <button class="btn-success" onclick="approveUser('${u.email}')">Aprobar ✅</button>
-                      <button class="btn-danger" style="margin-left:5px" onclick="rejectUser('${u.email}')">Rechazar ❌</button>
-                  </td>
-              `;
-              table.appendChild(tr);
-          });
+          await renderPendingUsers();
+          await renderAllUsers();
+          await renderVideosAdmin();
       }
 
-      function renderAllUsers() {
-          const users = JSON.parse(localStorage.getItem("users") || "[]");
-          const table = document.getElementById("all-users-table");
-          table.innerHTML = "";
+      async function renderPendingUsers() {
+          try {
+            const response = await apiFetch("/api/users");
+            const data = await response.json();
 
-          users.forEach(u => {
-              if (u.isAdmin) return;
-              const tr = document.createElement("tr");
-              tr.innerHTML = `
-                  <td><strong>${u.name}</strong></td>
-                  <td>${u.email}</td>
-                  <td><span class="${u.isPremium ? 'badge-active' : 'badge-free'}">${u.isPremium ? 'Premium' : 'Free'}</span> ${u.isPending ? '(Pendiente)' : ''}</td>
-                  <td>
-                      ${!u.isPremium ? `<button class="btn-dashboard" style="font-size:0.7rem; padding: 0.3rem 0.6rem;" onclick="approveUser('${u.email}')">Hacer Premium</button>` : `<button class="btn-danger" style="font-size:0.7rem; padding: 0.3rem 0.6rem;" onclick="downgradeUser('${u.email}')">Quitar Premium</button>`}
-                  </td>
-              `;
-              table.appendChild(tr);
-          });
-      }
+            if (!response.ok) throw new Error(data.message || "Error al cargar usuarios");
 
-      function renderVideosAdmin() {
-          const videos = JSON.parse(localStorage.getItem("videos") || "[]");
-          const list = document.getElementById("videos-admin-list");
-          list.innerHTML = "";
+            // Filtramos los que NO están aprobados para la sección de pendientes
+            const users = data.users || [];
+            const pending = users.filter(u => u.estado === "denegado" && u.role !== "admin");
+            
+            const table = document.getElementById("pending-users-table");
+            table.innerHTML = "";
 
-          videos.forEach((v, index) => {
-              const item = document.createElement("div");
-              item.style = "border: 1px solid #eee; padding: 1rem; border-radius: 4px; display: flex; justify-content: space-between; align-items: center;";
-              item.innerHTML = `
-                  <div>
-                    <strong>${v.title}</strong>
-                    <span class="${v.isPremium ? 'badge-active' : ''}" style="font-size: 0.7rem; background-color: ${v.isPremium ? '#9933cc' : '#eee'}; color: ${v.isPremium ? 'white' : '#333'}">
-                        ${v.isPremium ? '🚀 Premium' : 'Free'}
-                    </span>
-                    <div style="font-size: 0.8rem; color: #666">${v.detail}</div>
-                  </div>
-                  <div>
-                    <button style="border: none; background: none; cursor: pointer" onclick="deleteVideo(${index})">🗑️</button>
-                  </div>
-              `;
-              list.appendChild(item);
-          });
-      }
+            if (pending.length === 0) {
+                table.innerHTML = "<tr><td colspan='4' style='text-align:center; padding: 2rem;'>No hay solicitudes pendientes.</td></tr>";
+                return;
+            }
 
-      function approveUser(email) {
-          let users = JSON.parse(localStorage.getItem("users") || "[]");
-          const idx = users.findIndex(u => u.email === email);
-          if (idx !== -1) {
-              users[idx].isPremium = true;
-              users[idx].isPending = false;
-              localStorage.setItem("users", JSON.stringify(users));
-              alert("Usuario aprobado con éxito.");
-              initAdmin();
+            pending.forEach(u => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td><strong>${u.name || 'Sin nombre'}</strong></td>
+                    <td>${u.email}</td>
+                    <td><span style="color: #ffc107;">Pendiente de aprobación</span></td>
+                    <td>
+                        <button class="btn-success" onclick="approveUser('${u._id}')">Aprobar ✅</button>
+                        <button class="btn-danger" style="margin-left:5px" onclick="updateUserStatus('${u._id}', 'suspendido')">Suspender ❌</button>
+                    </td>
+                `;
+                table.appendChild(tr);
+            });
+          } catch (error) {
+            console.error("Error cargando pendientes:", error);
           }
       }
 
-      function rejectUser(email) {
-          let users = JSON.parse(localStorage.getItem("users") || "[]");
-          const idx = users.findIndex(u => u.email === email);
-          if (idx !== -1) {
-              users[idx].isPending = false;
-              localStorage.setItem("users", JSON.stringify(users));
-              alert("Solicitud rechazada.");
-              initAdmin();
+      async function renderAllUsers() {
+          try {
+            const response = await apiFetch("/api/users");
+            const data = await response.json();
+
+            if (!response.ok) throw new Error(data.message || "Error al cargar usuarios");
+
+            const users = data.users || [];
+            const table = document.getElementById("all-users-table");
+            table.innerHTML = "";
+
+            users.forEach(u => {
+                if (u.role === "admin" && u.email === localStorage.getItem("userEmail")) return;
+                
+                const tr = document.createElement("tr");
+                const isPremium = u.estado === "aprobado";
+                
+                tr.innerHTML = `
+                    <td><strong>${u.name || 'Sin nombre'}</strong></td>
+                    <td>${u.email}</td>
+                    <td>
+                      <span class="${isPremium ? 'badge-active' : 'badge-free'}">
+                        ${u.estado.toUpperCase()}
+                      </span>
+                    </td>
+                    <td>
+                        ${!isPremium ? `<button class="btn-dashboard" style="font-size:0.7rem; padding: 0.3rem 0.6rem;" onclick="approveUser('${u._id}')">Hacer Premium</button>` : `<button class="btn-danger" style="font-size:0.7rem; padding: 0.3rem 0.6rem;" onclick="updateUserStatus('${u._id}', 'denegado')">Quitar Premium</button>`}
+                    </td>
+                `;
+                table.appendChild(tr);
+            });
+          } catch (error) {
+            console.error("Error cargando todos los usuarios:", error);
           }
       }
 
-      function downgradeUser(email) {
-          let users = JSON.parse(localStorage.getItem("users") || "[]");
-          const idx = users.findIndex(u => u.email === email);
-          if (idx !== -1) {
-              users[idx].isPremium = false;
-              localStorage.setItem("users", JSON.stringify(users));
-              initAdmin();
+      async function renderVideosAdmin() {
+          try {
+            const response = await apiFetch("/api/videos");
+            const data = await response.json();
+
+            if (!response.ok) throw new Error(data.message || "Error al cargar videos");
+
+            const videos = data.videos || [];
+            const list = document.getElementById("videos-admin-list");
+            list.innerHTML = "";
+
+            videos.forEach((v) => {
+                const isPremium = v.categoria === 'premium';
+                const item = document.createElement("div");
+                item.style = "border: 1px solid #eee; padding: 1rem; border-radius: 4px; display: flex; justify-content: space-between; align-items: center;";
+                item.innerHTML = `
+                    <div>
+                      <strong>${v.titulo}</strong>
+                      <span class="${isPremium ? 'badge-active' : ''}" style="font-size: 0.7rem; background-color: ${isPremium ? '#9933cc' : '#eee'}; color: ${isPremium ? 'white' : '#333'}">
+                          ${isPremium ? '🚀 Premium' : 'Free'}
+                      </span>
+                      <div style="font-size: 0.8rem; color: #666">${v.descripcion}</div>
+                    </div>
+                    <div>
+                      <button style="border: none; background: none; cursor: pointer" onclick="deleteVideo('${v._id}')">🗑️</button>
+                    </div>
+                `;
+                list.appendChild(item);
+            });
+          } catch (error) {
+            console.error("Error cargando videos admin:", error);
           }
       }
 
-      function deleteVideo(index) {
+      async function approveUser(id) {
+          await updateUserStatus(id, "aprobado");
+      }
+
+      async function updateUserStatus(id, nuevoEstado) {
+          try {
+            const response = await apiFetch(`/api/users/${id}/estado`, {
+              method: "PATCH",
+              body: JSON.stringify({ estado: nuevoEstado })
+            });
+
+            if (response.ok) {
+              alert(`Estado actualizado a ${nuevoEstado}`);
+              initAdmin();
+            } else {
+              const data = await response.json();
+              alert("Error: " + data.message);
+            }
+          } catch (error) {
+            console.error("Error actualizando usuario:", error);
+          }
+      }
+
+      async function deleteVideo(id) {
           if (confirm("¿Seguro que querés eliminar este video?")) {
-              let videos = JSON.parse(localStorage.getItem("videos") || "[]");
-              videos.splice(index, 1);
-              localStorage.setItem("videos", JSON.stringify(videos));
-              renderVideosAdmin();
+              try {
+                const response = await apiFetch(`/api/videos/${id}`, {
+                  method: "DELETE"
+                });
+
+                if (response.ok) {
+                  alert("Video eliminado.");
+                  renderVideosAdmin();
+                } else {
+                  alert("Error al eliminar el video.");
+                }
+              } catch (error) {
+                console.error("Error eliminando video:", error);
+              }
           }
       }
 
@@ -414,34 +458,51 @@
         document.getElementById("formCargarVideo").reset();
       }
 
-      function guardarVideo() {
-        const title = document.getElementById("vid-titulo").value;
+      async function guardarVideo() {
+        const titulo = document.getElementById("vid-titulo").value;
         const link = document.getElementById("vid-url").value;
-        const detail = document.getElementById("vid-desc").value;
+        const descripcion = document.getElementById("vid-desc").value;
         const isPremium = document.getElementById("vid-isPremium").checked;
 
-        if (!title || !link) {
+        if (!titulo || !link) {
           alert("Por favor completá los campos obligatorios.");
           return;
         }
 
-        let videos = JSON.parse(localStorage.getItem("videos") || "[]");
-        videos.push({ title, link, detail, isPremium });
-        localStorage.setItem("videos", JSON.stringify(videos));
+        try {
+          const response = await apiFetch("/api/videos", {
+            method: "POST",
+            body: JSON.stringify({
+              titulo,
+              descripcion,
+              link,
+              categoria: isPremium ? 'premium' : 'free'
+            })
+          });
 
-        alert("Video cargado correctamente.");
-        closeModalVideo();
-        renderVideosAdmin();
+          if (response.ok) {
+            alert("Video cargado correctamente.");
+            closeModalVideo();
+            renderVideosAdmin();
+          } else {
+            const data = await response.json();
+            alert("Error: " + data.message);
+          }
+        } catch (error) {
+          console.error("Error guardando video:", error);
+        }
       }
 
       function logoutAdmin() {
-        localStorage.removeItem("isAdminLoggedIn");
+        localStorage.removeItem("isLoggedIn");
+        localStorage.removeItem("authToken");
+        localStorage.removeItem("userRole");
         window.location.href = "index.html";
       }
 
       initAdmin();
     </script>
-  </body>
-</html>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="app.js"></script>
   </body>
 </html>
