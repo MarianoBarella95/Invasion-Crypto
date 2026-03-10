@@ -144,11 +144,13 @@ document.addEventListener('DOMContentLoaded', () => {
     loginForm.addEventListener("submit", handleLogin);
 
     // Cerrar al hacer click fuera del contenido
-    overlayLogin.addEventListener("click", (e) => {
-      if (e.target === overlayLogin) {
-        overlayLogin.classList.remove("active");
-      }
-    });
+    if (overlayLogin) {
+      overlayLogin.addEventListener("click", (e) => {
+        if (e.target === overlayLogin) {
+          overlayLogin.classList.remove("active");
+        }
+      });
+    }
 
     // LÓGICA MODAL PAGO
     if (btnCerrarPayment && overlayPayment) {
@@ -266,11 +268,13 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Close on click outside
-    overlayRegister.addEventListener("click", (e) => {
-      if (e.target === overlayRegister) {
-        overlayRegister.classList.remove("active");
-      }
-    });
+    if (overlayRegister) {
+      overlayRegister.addEventListener("click", (e) => {
+        if (e.target === overlayRegister) {
+          overlayRegister.classList.remove("active");
+        }
+      });
+    }
   }
 
   // REGISTER LOGIC
