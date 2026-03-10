@@ -13,6 +13,9 @@
     <link rel="stylesheet" href="dashboard.css" />
   </head>
   <body>
+    <!-- Overlay para móvil -->
+    <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+
     <div class="dashboard-layout">
       <!-- Sidebar Admin -->
       <aside class="sidebar" id="sidebar" style="border-right: 4px solid #333">
@@ -58,6 +61,7 @@
       <!-- Main Content -->
       <main class="main-content">
         <header class="topbar" style="border-bottom: 2px solid #333">
+          <button class="menu-toggle" id="menu-toggle" onclick="toggleSidebar()">☰</button>
           <h1 style="color: #333; font-size: 1.5rem" id="page-title">
             Pendientes de Validación
           </h1>
@@ -89,8 +93,7 @@
             Validación de Pagos
           </h2>
           <p style="color: #666; font-size: 1.05rem; margin-bottom: 1.5rem">
-            Cotejá los comprobantes enviados por WhatsApp con esta lista para
-            activar usuarios.
+            Activá a los usuarios que ya enviaron su comprobante por WhatsApp.
           </p>
 
           <div class="card" style="padding: 0; overflow-x: auto">
@@ -98,81 +101,13 @@
               <thead>
                 <tr>
                   <th>Usuario</th>
-                  <th>DNI/CUIL</th>
-                  <th>Método de Pago</th>
-                  <th>Fecha Informe</th>
+                  <th>Email</th>
+                  <th>Estado Actual</th>
                   <th>Acciones</th>
                 </tr>
               </thead>
-              <tbody>
-                <tr id="row-1">
-                  <td>
-                    <strong>Juan Perez</strong><br />
-                    <span style="color: #666; font-size: 0.9rem"
-                      >juan@email.com</span
-                    >
-                  </td>
-                  <td>38444555</td>
-                  <td>Transferencia</td>
-                  <td>Hoy, 14:30</td>
-                  <td class="table-actions">
-                    <button
-                      class="btn-success"
-                      title="Activar"
-                      onclick="actionPendiente('row-1', 'aprobar')"
-                    >
-                      ✅
-                    </button>
-                    <button
-                      class="btn-danger"
-                      title="Rechazar"
-                      onclick="actionPendiente('row-1', 'rechazar')"
-                    >
-                      ❌
-                    </button>
-                    <button
-                      class="btn-warning"
-                      title="Pedir Info"
-                      onclick="alert('Solicitando más información...')"
-                    >
-                      🔁
-                    </button>
-                  </td>
-                </tr>
-                <tr id="row-2">
-                  <td>
-                    <strong>Maria Gomez</strong><br />
-                    <span style="color: #666; font-size: 0.9rem"
-                      >maria@email.com</span
-                    >
-                  </td>
-                  <td>27888999</td>
-                  <td>Crypto</td>
-                  <td>Hoy, 10:15</td>
-                  <td class="table-actions">
-                    <button
-                      class="btn-success"
-                      title="Activar"
-                      onclick="actionPendiente('row-2', 'aprobar')"
-                    >
-                      ✅
-                    </button>
-                    <button
-                      class="btn-danger"
-                      title="Rechazar"
-                      onclick="actionPendiente('row-2', 'rechazar')"
-                    >
-                      ❌
-                    </button>
-                    <button
-                      class="btn-warning"
-                      title="Pedir Info"
-                      onclick="alert('Solicitando más información...')"
-                    >
-                      🔁
-                    </button>
-                  </td>
-                </tr>
+              <tbody id="pending-users-table">
+                <!-- Se carga dinámicamente -->
               </tbody>
             </table>
           </div>
@@ -190,102 +125,18 @@
             Gestión de Usuarios
           </h2>
 
-          <div
-            style="
-              margin-bottom: 1.5rem;
-              display: flex;
-              gap: 1rem;
-              align-items: center;
-            "
-          >
-            <label style="font-weight: bold; font-family: &quot;Fira Sans&quot;"
-              >Filtro:</label
-            >
-            <select
-              style="
-                padding: 0.5rem;
-                border: 1px solid #ccc;
-                border-radius: 4px;
-                font-family: &quot;Fira Sans&quot;;
-              "
-            >
-              <option>Todos</option>
-              <option>Activos</option>
-              <option>Suspendidos</option>
-              <option>Pendientes</option>
-            </select>
-            <input
-              type="text"
-              placeholder="Buscar por email o nombre..."
-              style="
-                padding: 0.5rem;
-                border: 1px solid #ccc;
-                border-radius: 4px;
-                width: 300px;
-                font-family: &quot;Fira Sans&quot;;
-              "
-            />
-          </div>
-
           <div class="card" style="padding: 0; overflow-x: auto">
             <table class="data-table">
               <thead>
                 <tr>
                   <th>Usuario</th>
-                  <th>Estado</th>
-                  <th>Membresía Hasta</th>
+                  <th>Email</th>
+                  <th>Membresía</th>
                   <th>Acciones</th>
                 </tr>
               </thead>
-              <tbody>
-                <tr>
-                  <td>
-                    <strong>Carlos Ruiz</strong><br />
-                    <span style="color: #666; font-size: 0.9rem"
-                      >carlos@email.com</span
-                    >
-                  </td>
-                  <td><span class="badge-active">Activo</span></td>
-                  <td>24/Abr/2026</td>
-                  <td class="table-actions">
-                    <button
-                      class="btn-warning"
-                      onclick="alert('Usuario suspendido')"
-                    >
-                      Suspender
-                    </button>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <strong>Ana Lopez</strong><br />
-                    <span style="color: #666; font-size: 0.9rem"
-                      >ana@email.com</span
-                    >
-                  </td>
-                  <td>
-                    <span
-                      style="
-                        background-color: #f8d7da;
-                        color: #721c24;
-                        padding: 0.2rem 0.6rem;
-                        border-radius: 20px;
-                        font-size: 0.85rem;
-                        font-weight: bold;
-                      "
-                      >Suspendido</span
-                    >
-                  </td>
-                  <td>-</td>
-                  <td class="table-actions">
-                    <button
-                      class="btn-success"
-                      onclick="alert('Usuario activado')"
-                    >
-                      Activar
-                    </button>
-                  </td>
-                </tr>
+              <tbody id="all-users-table">
+                <!-- Se carga dinámicamente -->
               </tbody>
             </table>
           </div>
@@ -303,7 +154,7 @@
             Gestión de Contenido
           </h2>
 
-          <div class="grid-cards" style="grid-template-columns: 1fr 1fr">
+          <div class="grid-cards" style="grid-template-columns: 1fr">
             <!-- Columna Videos -->
             <div class="card">
               <div
@@ -314,7 +165,7 @@
                   margin-bottom: 1rem;
                 "
               >
-                <h3 class="card-title" style="margin: 0">Videos</h3>
+                <h3 class="card-title" style="margin: 0">Videos Cargados</h3>
                 <button
                   class="btn-dashboard"
                   style="padding: 0.4rem 0.8rem; font-size: 0.9rem"
@@ -324,177 +175,13 @@
                 </button>
               </div>
 
-              <div style="display: flex; flex-direction: column; gap: 1rem">
-                <div
-                  style="
-                    border: 1px solid #eee;
-                    padding: 1rem;
-                    border-radius: 4px;
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                  "
-                >
-                  <div>
-                    <strong>Vivo Febrero 2026</strong>
-                    <span class="badge-active" style="font-size: 0.7rem"
-                      >Visible</span
-                    >
-                    <div style="font-size: 0.8rem; color: #666">
-                      Categoría: Vivos
-                    </div>
-                  </div>
-                  <div>
-                    <button
-                      style="border: none; background: none; cursor: pointer"
-                      title="Editar"
-                    >
-                      ✏️
-                    </button>
-                    <button
-                      style="border: none; background: none; cursor: pointer"
-                      title="Ocultar"
-                    >
-                      👁️‍🗨️
-                    </button>
-                  </div>
-                </div>
-
-                <div
-                  style="
-                    border: 1px solid #eee;
-                    padding: 1rem;
-                    border-radius: 4px;
-                    background-color: #fcfcfc;
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                  "
-                >
-                  <div>
-                    <strong style="color: #888">Estrategia Scalping</strong>
-                    <span
-                      style="
-                        background-color: #e2e3e5;
-                        color: #383d41;
-                        padding: 0.2rem 0.6rem;
-                        border-radius: 20px;
-                        font-size: 0.7rem;
-                        font-weight: bold;
-                      "
-                      >Oculto</span
-                    >
-                    <div style="font-size: 0.8rem; color: #888">
-                      Categoría: Estrategias
-                    </div>
-                  </div>
-                  <div>
-                    <button
-                      style="border: none; background: none; cursor: pointer"
-                      title="Editar"
-                    >
-                      ✏️
-                    </button>
-                    <button
-                      style="border: none; background: none; cursor: pointer"
-                      title="Mostrar"
-                    >
-                      👁️
-                    </button>
-                  </div>
-                </div>
+              <div id="videos-admin-list" style="display: flex; flex-direction: column; gap: 1rem">
+                <!-- Lista de videos se carga aquí -->
               </div>
-            </div>
-
-            <!-- Columna Links Grupos -->
-            <div class="card">
-              <div
-                style="
-                  display: flex;
-                  justify-content: space-between;
-                  align-items: center;
-                  margin-bottom: 1rem;
-                "
-              >
-                <h3 class="card-title" style="margin: 0">Links de Grupos</h3>
-              </div>
-
-              <form style="display: flex; flex-direction: column; gap: 1rem">
-                <div>
-                  <label
-                    style="
-                      display: block;
-                      font-size: 0.9rem;
-                      margin-bottom: 0.3rem;
-                    "
-                    >Link Grupo Café</label
-                  >
-                  <input
-                    type="text"
-                    value="https://chat.whatsapp.com/CjQV87soewTCbd38Vb10u6?mode=gi_t"
-                    style="
-                      width: 100%;
-                      padding: 0.5rem;
-                      border: 1px solid #ccc;
-                      font-family: &quot;Fira Code&quot;, monospace;
-                      font-size: 0.8rem;
-                    "
-                  />
-                </div>
-                <div>
-                  <label
-                    style="
-                      display: block;
-                      font-size: 0.9rem;
-                      margin-bottom: 0.3rem;
-                    "
-                    >Link Grupo Stream</label
-                  >
-                  <input
-                    type="text"
-                    value="https://chat.whatsapp.com/J6Oq6USu0dSKd81IngngnS?mode=gi_t"
-                    style="
-                      width: 100%;
-                      padding: 0.5rem;
-                      border: 1px solid #ccc;
-                      font-family: &quot;Fira Code&quot;, monospace;
-                      font-size: 0.8rem;
-                    "
-                  />
-                </div>
-                <div>
-                  <label
-                    style="
-                      display: block;
-                      font-size: 0.9rem;
-                      margin-bottom: 0.3rem;
-                    "
-                    >Link Grupo Alertas</label
-                  >
-                  <input
-                    type="text"
-                    value="https://chat.whatsapp.com/Cf755ECXEVh9CBgbNNcLHb?mode=gi_t"
-                    style="
-                      width: 100%;
-                      padding: 0.5rem;
-                      border: 1px solid #ccc;
-                      font-family: &quot;Fira Code&quot;, monospace;
-                      font-size: 0.8rem;
-                    "
-                  />
-                </div>
-                <button
-                  type="button"
-                  class="btn-dashboard"
-                  style="background-color: #333"
-                  onclick="alert('Links actualizados correctamente')"
-                >
-                  Guardar Links
-                </button>
-              </form>
             </div>
           </div>
         </section>
+
         <!-- MODAL CARGAR VIDEO -->
         <div class="overlay-carrito" id="modalVideo" style="z-index: 2000">
           <div
@@ -535,76 +222,20 @@
               style="display: flex; flex-direction: column; gap: 1rem"
             >
               <div class="input-group">
-                <label
-                  style="
-                    font-family: &quot;Fira Sans&quot;, sans-serif;
-                    font-size: 0.9rem;
-                    color: #555;
-                  "
-                  >Título del Video</label
-                >
-                <input
-                  type="text"
-                  id="vid-titulo"
-                  required
-                  placeholder="Ej. Vivo Marzo 2026"
-                  style="
-                    padding: 0.75rem;
-                    border: 1px solid #ccc;
-                    border-radius: 4px;
-                    font-family: &quot;Fira Code&quot;, monospace;
-                    font-size: 0.9rem;
-                    width: 100%;
-                  "
-                />
+                <label style="font-size: 0.9rem; color: #555;">Título del Video</label>
+                <input type="text" id="vid-titulo" required style="padding: 0.75rem; border: 1px solid #ccc; width: 100%; border-radius: 4px;"/>
               </div>
               <div class="input-group">
-                <label
-                  style="
-                    font-family: &quot;Fira Sans&quot;, sans-serif;
-                    font-size: 0.9rem;
-                    color: #555;
-                  "
-                  >URL de YouTube (URL directa)</label
-                >
-                <input
-                  type="text"
-                  id="vid-url"
-                  required
-                  placeholder="https://www.youtube.com/watch?v=..."
-                  style="
-                    padding: 0.75rem;
-                    border: 1px solid #ccc;
-                    border-radius: 4px;
-                    font-family: &quot;Fira Code&quot;, monospace;
-                    font-size: 0.9rem;
-                    width: 100%;
-                  "
-                />
+                <label style="font-size: 0.9rem; color: #555;">URL de YouTube (Embed)</label>
+                <input type="text" id="vid-url" required placeholder="https://www.youtube.com/embed/..." style="padding: 0.75rem; border: 1px solid #ccc; width: 100%; border-radius: 4px;"/>
               </div>
               <div class="input-group">
-                <label
-                  style="
-                    font-family: &quot;Fira Sans&quot;, sans-serif;
-                    font-size: 0.9rem;
-                    color: #555;
-                  "
-                  >Descripción</label
-                >
-                <textarea
-                  id="vid-desc"
-                  rows="4"
-                  placeholder="Insertá la descripción del video acá..."
-                  style="
-                    padding: 0.75rem;
-                    border: 1px solid #ccc;
-                    border-radius: 4px;
-                    font-family: &quot;Fira Code&quot;, monospace;
-                    font-size: 0.9rem;
-                    width: 100%;
-                    resize: vertical;
-                  "
-                ></textarea>
+                <label style="font-size: 0.9rem; color: #555;">Descripción</label>
+                <textarea id="vid-desc" rows="3" style="padding: 0.75rem; border: 1px solid #ccc; width: 100%; border-radius: 4px;"></textarea>
+              </div>
+              <div class="input-group" style="display: flex; align-items: center; gap: 0.5rem;">
+                <input type="checkbox" id="vid-isPremium" style="width: 18px; height: 18px;"/>
+                <label for="vid-isPremium" style="font-size: 0.9rem; font-weight: bold; color: #9933cc;">¿Es Video Premium?</label>
               </div>
               <button
                 type="button"
@@ -621,7 +252,124 @@
     </div>
 
     <script>
-      // Navegación Básica Spa-Like
+      function initAdmin() {
+          renderPendingUsers();
+          renderAllUsers();
+          renderVideosAdmin();
+      }
+
+      function renderPendingUsers() {
+          const users = JSON.parse(localStorage.getItem("users") || "[]");
+          const pending = users.filter(u => u.isPending && !u.isPremium);
+          const table = document.getElementById("pending-users-table");
+          table.innerHTML = "";
+
+          if (pending.length === 0) {
+              table.innerHTML = "<tr><td colspan='4' style='text-align:center; padding: 2rem;'>No hay solicitudes pendientes.</td></tr>";
+              return;
+          }
+
+          pending.forEach(u => {
+              const tr = document.createElement("tr");
+              tr.innerHTML = `
+                  <td><strong>${u.name}</strong></td>
+                  <td>${u.email}</td>
+                  <td><span style="color: #ffc107;">Solicitó Premium</span></td>
+                  <td>
+                      <button class="btn-success" onclick="approveUser('${u.email}')">Aprobar ✅</button>
+                      <button class="btn-danger" style="margin-left:5px" onclick="rejectUser('${u.email}')">Rechazar ❌</button>
+                  </td>
+              `;
+              table.appendChild(tr);
+          });
+      }
+
+      function renderAllUsers() {
+          const users = JSON.parse(localStorage.getItem("users") || "[]");
+          const table = document.getElementById("all-users-table");
+          table.innerHTML = "";
+
+          users.forEach(u => {
+              if (u.isAdmin) return;
+              const tr = document.createElement("tr");
+              tr.innerHTML = `
+                  <td><strong>${u.name}</strong></td>
+                  <td>${u.email}</td>
+                  <td><span class="${u.isPremium ? 'badge-active' : 'badge-free'}">${u.isPremium ? 'Premium' : 'Free'}</span> ${u.isPending ? '(Pendiente)' : ''}</td>
+                  <td>
+                      ${!u.isPremium ? `<button class="btn-dashboard" style="font-size:0.7rem; padding: 0.3rem 0.6rem;" onclick="approveUser('${u.email}')">Hacer Premium</button>` : `<button class="btn-danger" style="font-size:0.7rem; padding: 0.3rem 0.6rem;" onclick="downgradeUser('${u.email}')">Quitar Premium</button>`}
+                  </td>
+              `;
+              table.appendChild(tr);
+          });
+      }
+
+      function renderVideosAdmin() {
+          const videos = JSON.parse(localStorage.getItem("videos") || "[]");
+          const list = document.getElementById("videos-admin-list");
+          list.innerHTML = "";
+
+          videos.forEach((v, index) => {
+              const item = document.createElement("div");
+              item.style = "border: 1px solid #eee; padding: 1rem; border-radius: 4px; display: flex; justify-content: space-between; align-items: center;";
+              item.innerHTML = `
+                  <div>
+                    <strong>${v.title}</strong>
+                    <span class="${v.isPremium ? 'badge-active' : ''}" style="font-size: 0.7rem; background-color: ${v.isPremium ? '#9933cc' : '#eee'}; color: ${v.isPremium ? 'white' : '#333'}">
+                        ${v.isPremium ? '🚀 Premium' : 'Free'}
+                    </span>
+                    <div style="font-size: 0.8rem; color: #666">${v.detail}</div>
+                  </div>
+                  <div>
+                    <button style="border: none; background: none; cursor: pointer" onclick="deleteVideo(${index})">🗑️</button>
+                  </div>
+              `;
+              list.appendChild(item);
+          });
+      }
+
+      function approveUser(email) {
+          let users = JSON.parse(localStorage.getItem("users") || "[]");
+          const idx = users.findIndex(u => u.email === email);
+          if (idx !== -1) {
+              users[idx].isPremium = true;
+              users[idx].isPending = false;
+              localStorage.setItem("users", JSON.stringify(users));
+              alert("Usuario aprobado con éxito.");
+              initAdmin();
+          }
+      }
+
+      function rejectUser(email) {
+          let users = JSON.parse(localStorage.getItem("users") || "[]");
+          const idx = users.findIndex(u => u.email === email);
+          if (idx !== -1) {
+              users[idx].isPending = false;
+              localStorage.setItem("users", JSON.stringify(users));
+              alert("Solicitud rechazada.");
+              initAdmin();
+          }
+      }
+
+      function downgradeUser(email) {
+          let users = JSON.parse(localStorage.getItem("users") || "[]");
+          const idx = users.findIndex(u => u.email === email);
+          if (idx !== -1) {
+              users[idx].isPremium = false;
+              localStorage.setItem("users", JSON.stringify(users));
+              initAdmin();
+          }
+      }
+
+      function deleteVideo(index) {
+          if (confirm("¿Seguro que querés eliminar este video?")) {
+              let videos = JSON.parse(localStorage.getItem("videos") || "[]");
+              videos.splice(index, 1);
+              localStorage.setItem("videos", JSON.stringify(videos));
+              renderVideosAdmin();
+          }
+      }
+
       function switchSection(sectionName) {
         document.querySelectorAll(".dashboard-section").forEach((sec) => {
           sec.classList.remove("active");
@@ -630,9 +378,7 @@
           nav.classList.remove("active");
         });
 
-        document
-          .getElementById("section-" + sectionName)
-          .classList.add("active");
+        document.getElementById("section-" + sectionName).classList.add("active");
         event.currentTarget.classList.add("active");
 
         const titleMap = {
@@ -640,37 +386,25 @@
           usuarios: "Gestión de Usuarios",
           contenido: "Gestión de Contenido",
         };
-        document.getElementById("page-title").innerText =
-          titleMap[sectionName] || "";
-      }
+        document.getElementById("page-title").innerText = titleMap[sectionName] || "";
 
-      function actionPendiente(rowId, action) {
-        const row = document.getElementById(rowId);
-        if (action === "aprobar") {
-          alert(
-            "Usuario Aprobado y Activado. Se enviará email de confirmación.",
-          );
-          row.remove();
-        } else if (action === "rechazar") {
-          if (confirm("¿Seguro que deseas rechazar este pago?")) {
-            row.remove();
-          }
+        // Cerrar sidebar en móvil al navegar
+        if (window.innerWidth <= 992) {
+            const sidebar = document.getElementById("sidebar");
+            const overlay = document.getElementById("sidebar-overlay");
+            if (sidebar.classList.contains("open")) {
+                toggleSidebar();
+            }
         }
       }
 
-      // Cierre de Sesión Admin
-      function logoutAdmin() {
-        localStorage.removeItem("isAdminLoggedIn");
-        window.location.href = "admin_login.html";
+      function toggleSidebar() {
+          const sidebar = document.getElementById("sidebar");
+          const overlay = document.getElementById("sidebar-overlay");
+          sidebar.classList.toggle("open");
+          overlay.classList.toggle("active");
       }
 
-      // Verificación simulada
-      if (localStorage.getItem("isAdminLoggedIn") !== "true") {
-        // alert('Acceso denegado.');
-        // window.location.href = 'admin_login.html'; // Descomentado en prod
-      }
-
-      // Logica del Modal de Videos
       function openModalVideo() {
         document.getElementById("modalVideo").classList.add("active");
       }
@@ -681,19 +415,33 @@
       }
 
       function guardarVideo() {
-        const titulo = document.getElementById("vid-titulo").value;
-        const url = document.getElementById("vid-url").value;
-        if (!titulo || !url) {
-          alert("Por favor completá los campos obligatorios para el video.");
+        const title = document.getElementById("vid-titulo").value;
+        const link = document.getElementById("vid-url").value;
+        const detail = document.getElementById("vid-desc").value;
+        const isPremium = document.getElementById("vid-isPremium").checked;
+
+        if (!title || !link) {
+          alert("Por favor completá los campos obligatorios.");
           return;
         }
-        alert(
-          'El video "' +
-            titulo +
-            '" se ha guardado y catalogado con éxito. (Simulación)',
-        );
+
+        let videos = JSON.parse(localStorage.getItem("videos") || "[]");
+        videos.push({ title, link, detail, isPremium });
+        localStorage.setItem("videos", JSON.stringify(videos));
+
+        alert("Video cargado correctamente.");
         closeModalVideo();
+        renderVideosAdmin();
       }
+
+      function logoutAdmin() {
+        localStorage.removeItem("isAdminLoggedIn");
+        window.location.href = "index.html";
+      }
+
+      initAdmin();
     </script>
+  </body>
+</html>
   </body>
 </html>

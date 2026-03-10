@@ -72,51 +72,42 @@ document.addEventListener('DOMContentLoaded', () => {
       overlayLogin.classList.remove("active");
     });
 
-    // Manejo del Login
-    loginForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
+  // Manejo del Login Consolidado
+  const handleLogin = (e) => {
+    e.preventDefault();
+    const emailInput = document.getElementById("email");
+    const passwordInput = document.getElementById("password");
+    
+    if (!emailInput || !passwordInput) return;
 
-      if (email && password) {
-        try {
-          const response = await fetch('https://invasioncrypto-api.vercel.app/api/auth/login', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ email, password })
-          });
+    const email = emailInput.value;
+    const password = passwordInput.value;
 
-          const data = await response.json();
+    if (email && password) {
+      // Simulación local
+      const users = JSON.parse(localStorage.getItem("users") || "[]");
+      const user = users.find(u => u.email === email && u.password === password);
 
-          if (response.ok) {
-            localStorage.setItem("isLoggedIn", "true");
-            localStorage.setItem("userEmail", email);
-            if (data.name) localStorage.setItem("userName", data.name);
-            if (data.token) localStorage.setItem("authToken", data.token);
-
-            updateUserUI();
-
-            // Cerrar modal y mostrar pago
-            overlayLogin.classList.remove("active");
-            showToast("Login exitoso.");
-            if (overlayPayment) {
-              overlayPayment.classList.add("active");
-            } else {
-              window.location.href = MP_LINK;
-            }
-          } else {
-            showToast(data.message || "Error al iniciar sesión. Verificá tus datos.");
-          }
-        } catch (error) {
-          console.error("Error:", error);
-          showToast("Hubo un problema con la conexión.");
-        }
+      if (user) {
+        localStorage.setItem("isLoggedIn", "true");
+        localStorage.setItem("userEmail", email);
+        localStorage.setItem("userName", user.name);
+        localStorage.setItem("isPremium", user.isPremium);
+        
+        showToast("Login exitoso.");
+        setTimeout(() => {
+          window.location.href = "panel_usuario.html";
+        }, 1000);
       } else {
-        showToast("Por favor completá todos los campos.");
+        showToast("Email o contraseña incorrectos.");
       }
-    });
+    } else {
+      showToast("Por favor completá todos los campos.");
+    }
+  };
+
+  if (loginForm) {
+    loginForm.addEventListener("submit", handleLogin);
 
     // Cerrar al hacer click fuera del contenido
     overlayLogin.addEventListener("click", (e) => {
@@ -137,6 +128,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       });
     }
+  }
   }
 
   // ELEMENTOS DEL MODAL FORGOT PASSWORD
@@ -260,45 +252,56 @@ document.addEventListener('DOMContentLoaded', () => {
       const password = document.getElementById("regPassword").value;
 
       if (name && email && password) {
-        try {
-          const response = await fetch('https://invasioncrypto-api.vercel.app/api/auth/register', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ name, email, password })
-          });
-
-          const data = await response.json();
-
-          if (response.ok) {
-            showToast("Registro exitoso. Iniciando sesión...");
-
-            // Auto login
-            localStorage.setItem("isLoggedIn", "true");
-            localStorage.setItem("userEmail", email);
-            localStorage.setItem("userName", name);
-
-            updateUserUI();
-
-            overlayRegister.classList.remove("active");
-            if (overlayPayment) {
-              overlayPayment.classList.add("active");
-            } else {
-              window.location.href = MP_LINK;
-            }
-          } else {
-            showToast(data.message || "Error al registrarse. Intentalo de nuevo.");
-          }
-        } catch (error) {
-          console.error("Error:", error);
-          showToast("Hubo un problema con la conexión.");
+        // Simulación local para el flujo solicitado
+        let users = JSON.parse(localStorage.getItem("users") || "[]");
+        if (users.find(u => u.email === email)) {
+          showToast("El usuario ya existe.");
+          return;
         }
+
+        const newUser = {
+          name,
+          email,
+          password,
+          isPremium: false,
+          isPending: false
+        };
+        users.push(newUser);
+        localStorage.setItem("users", JSON.stringify(users));
+
+        showToast("Registro exitoso. Serás redirigido al login.");
+        
+        setTimeout(() => {
+          // Redirigir al login (en auth.html o donde se encuentre el form)
+          if (window.location.pathname.includes("auth.html")) {
+              overlayRegister.classList.remove("active");
+              overlayLogin.classList.add("active");
+          } else {
+              window.location.href = "auth.html?mode=login";
+          }
+        }, 2000);
       } else {
         showToast("Por favor completá todos los campos.");
       }
     });
   }
+
+  // INICIALIZACIÓN DE DATOS (MOCK)
+  const initData = () => {
+    if (!localStorage.getItem("users")) {
+      localStorage.setItem("users", JSON.stringify([
+        { name: "Admin", email: "admin@invasion.com", password: "admin", isAdmin: true },
+        { name: "Usuario Prueba", email: "user@test.com", password: "user", isPremium: false, isPending: false }
+      ]));
+    }
+    if (!localStorage.getItem("videos")) {
+      localStorage.setItem("videos", JSON.stringify([
+        { title: "Introducción a Bitcoin", detail: "Conceptos básicos para empezar.", link: "https://www.youtube.com/embed/dQw4w9WgXcQ", isPremium: false },
+        { title: "Trading Avanzado", detail: "Estrategias premium para expertos.", link: "https://www.youtube.com/embed/dQw4w9WgXcQ", isPremium: true }
+      ]));
+    }
+  };
+  initData();
 
   // ELEMENTOS DEL MODAL CARRITO (LEGACY - Mantenido por si se revierte)
   const overlay = document.getElementById("overlayCarrito");
@@ -446,3 +449,45 @@ function showToast(message, duration = 3000) {
     }, 300); // Wait for transition
   }, duration);
 }
+
+// ANIMACIÓN DE LOGOS FLOTANTES (GSAP)
+function initLogoAnimation() {
+  const banners = document.querySelectorAll('.banner, .banner-secondary');
+  if (banners.length === 0 || typeof gsap === 'undefined') return;
+
+  banners.forEach((banner) => {
+    const logoCount = 12;
+    for (let i = 0; i < logoCount; i++) {
+        const logo = document.createElement('div');
+        logo.className = 'logo-floating';
+        logo.innerHTML = `<svg viewBox="0 0 100 100" fill="white" style="width: 100%; height: 100%; opacity: 0.15;">
+            <path d="M20,20 L50,80 L80,20 L70,20 L50,60 L30,20 Z" />
+        </svg>`;
+        
+        logo.style.position = 'absolute';
+        logo.style.width = (Math.random() * 40 + 30) + 'px';
+        logo.style.height = logo.style.width;
+        logo.style.left = Math.random() * 90 + '%';
+        logo.style.top = Math.random() * 90 + '%';
+        logo.style.pointerEvents = 'none';
+        logo.style.zIndex = '1';
+
+        banner.appendChild(logo);
+
+        gsap.to(logo, {
+            x: 'random(-150, 150)',
+            y: 'random(-150, 150)',
+            rotation: 'random(-180, 180)',
+            duration: 'random(8, 15)',
+            repeat: -1,
+            yoyo: true,
+            ease: "sine.inOut"
+        });
+    }
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    initLogoAnimation();
+});
+

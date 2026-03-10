@@ -122,16 +122,10 @@
 
     <script>
       function switchTab(tab) {
-        // Update tabs
-        document
-          .querySelectorAll(".auth-tab")
-          .forEach((t) => t.classList.remove("active"));
+        document.querySelectorAll(".auth-tab").forEach((t) => t.classList.remove("active"));
         document.getElementById(`tab-${tab}`).classList.add("active");
 
-        // Update forms
-        document
-          .querySelectorAll(".auth-form")
-          .forEach((f) => f.classList.remove("active"));
+        document.querySelectorAll(".auth-form").forEach((f) => f.classList.remove("active"));
         if (tab === "login") {
           document.getElementById("LoginForm").classList.add("active");
         } else {
@@ -139,36 +133,65 @@
         }
       }
 
-      document
-        .getElementById("RegisterForm")
-        .addEventListener("submit", function (e) {
-          e.preventDefault();
-          const pass = document.getElementById("reg-password").value;
-          const confirm = document.getElementById("reg-confirm").value;
+      // REGISTER LOGIC
+      document.getElementById("RegisterForm").addEventListener("submit", function (e) {
+        e.preventDefault();
+        const name = document.getElementById("reg-name").value;
+        const email = document.getElementById("reg-email").value;
+        const pass = document.getElementById("reg-password").value;
+        const confirm = document.getElementById("reg-confirm").value;
 
-          if (pass !== confirm) {
-            alert("Las contraseñas no coinciden.");
-            return;
-          }
+        if (pass !== confirm) {
+          alert("Las contraseñas no coinciden.");
+          return;
+        }
 
-          // Simular éxito de registro
-          window.location.href = "validacion.html";
+        let users = JSON.parse(localStorage.getItem("users") || "[]");
+        if (users.find(u => u.email === email)) {
+          alert("El usuario ya existe.");
+          return;
+        }
+
+        users.push({
+          name,
+          email,
+          password: pass,
+          isPremium: false,
+          isPending: false
         });
+        localStorage.setItem("users", JSON.stringify(users));
 
-      document
-        .getElementById("LoginForm")
-        .addEventListener("submit", function (e) {
-          e.preventDefault();
-          // Simular login exitoso -> si está activo o no, para ahora simularemos que va al dashboard
+        alert("Registro exitoso. Ahora podés iniciar sesión.");
+        switchTab('login');
+        document.getElementById("login-email").value = email;
+      });
+
+      // LOGIN LOGIC
+      document.getElementById("LoginForm").addEventListener("submit", function (e) {
+        e.preventDefault();
+        const email = document.getElementById("login-email").value;
+        const password = document.getElementById("login-password").value;
+
+        const users = JSON.parse(localStorage.getItem("users") || "[]");
+        const user = users.find(u => u.email === email && u.password === password);
+
+        if (user) {
           localStorage.setItem("isLoggedIn", "true");
-          // Mockeamos el estado
-          const hasSubscription = true; // cambiar a false para probar flujo manual
-          if (hasSubscription) {
-            window.location.href = "panel_usuario.html";
-          } else {
-            window.location.href = "activar.html";
-          }
-        });
+          localStorage.setItem("userEmail", email);
+          localStorage.setItem("userName", user.name);
+          localStorage.setItem("isPremium", user.isPremium);
+          
+          window.location.href = "panel_usuario.html";
+        } else {
+          alert("Email o contraseña incorrectos.");
+        }
+      });
+
+      // Check for mode in URL
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('mode') === 'register') {
+          switchTab('register');
+      }
     </script>
   </body>
 </html>

@@ -13,6 +13,9 @@
     <link rel="stylesheet" href="dashboard.css" />
   </head>
   <body>
+    <!-- Overlay para móvil -->
+    <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+
     <div class="dashboard-layout">
       <!-- Sidebar -->
       <aside class="sidebar" id="sidebar">
@@ -50,31 +53,40 @@
       <!-- Main Content -->
       <main class="main-content">
         <header class="topbar">
+          <button class="menu-toggle" id="menu-toggle" onclick="toggleSidebar()">☰</button>
           <h1 style="color: #333; font-size: 1.5rem" id="page-title">
             Bienvenido
           </h1>
           <div class="user-info">
-            <span class="badge-active">✅ Membresía Activa</span>
-            <span id="user-name">Usuario Analista</span>
-            <div class="avatar">U</div>
+            <span class="badge-active" id="user-status">✅ Membresía Activa</span>
+            <span id="user-name-display">Usuario Analista</span>
+            <div class="avatar" id="user-avatar">U</div>
           </div>
         </header>
 
         <!-- SECTION: HOME -->
         <section id="section-home" class="dashboard-section active">
-          <h2
+          <h2 id="welcome-msg"
             style="
               font-family: &quot;Fira Sans&quot;;
               margin-bottom: 1rem;
               color: #9933cc;
             "
           >
-            ¡Hola, bienvenido al Panel de CRYPTO+!
+            ¡Hola, bienvenido al Panel!
           </h2>
-          <p style="color: #666; font-size: 1.1rem">
+          <p id="subscription-msg" style="color: #666; font-size: 1.1rem">
             Tu suscripción está activa. Desde acá podés acceder a todos los
             beneficios de la comunidad.
           </p>
+
+          <div id="premium-upgrade-banner" style="display: none; background: linear-gradient(135deg, #9933cc, #6e2594); color: white; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <h3 style="margin: 0">¡Pasate a PREMIUM!</h3>
+              <p style="margin: 0.5rem 0 0; font-size: 0.9rem">Accede a cursos exclusivos, alertas y grupos de WhatsApp.</p>
+            </div>
+            <button class="btn-dashboard" style="background: white; color: #9933cc; border: none;" onclick="openUpgradeModal()">Mejorar ahora</button>
+          </div>
 
           <div class="grid-cards">
             <div
@@ -90,8 +102,7 @@
               <span style="font-size: 3rem">🎬</span>
               <h3 class="card-title">Biblioteca de Contenido</h3>
               <p style="color: #666; font-size: 0.9rem">
-                Accedé a los vivos pasados, seminarios y videos educativos
-                exclusivos.
+                Accedé a los vivos pasados, seminarios y videos educativos.
               </p>
               <button class="btn-dashboard" onclick="switchSection('videos')">
                 Ver Videos
@@ -100,6 +111,7 @@
 
             <div
               class="card"
+              id="groups-card-home"
               style="
                 display: flex;
                 flex-direction: column;
@@ -114,7 +126,7 @@
                 Sumate a los grupos de WhatsApp y recibí alertas del mercado en
                 tiempo real.
               </p>
-              <button class="btn-dashboard" onclick="switchSection('grupos')">
+              <button class="btn-dashboard" id="btn-groups-home" onclick="switchSection('grupos')">
                 Acceso a Grupos
               </button>
             </div>
@@ -123,7 +135,7 @@
 
         <!-- SECTION: VIDEOS -->
         <section id="section-videos" class="dashboard-section">
-          <h2
+          <h2 id="videos-header"
             style="
               font-family: &quot;Fira Sans&quot;;
               margin-bottom: 1rem;
@@ -133,91 +145,42 @@
             Biblioteca de Contenido
           </h2>
 
-          <div style="margin-bottom: 1.5rem">
+          <div style="margin-bottom: 1.5rem" id="video-filters">
             <button
-              class="btn-dashboard"
+              class="btn-dashboard filter-btn active"
               style="background-color: #333; margin-right: 0.5rem"
+              onclick="filterVideos('all')"
             >
               Todos
             </button>
             <button
-              class="btn-dashboard"
+              class="btn-dashboard filter-btn"
               style="
                 background-color: transparent;
                 border: 1px solid #9933cc;
                 color: #9933cc;
                 margin-right: 0.5rem;
               "
+              onclick="filterVideos('free')"
             >
-              Vivos
+              Gratis
             </button>
             <button
-              class="btn-dashboard"
+              id="filter-premium"
+              class="btn-dashboard filter-btn"
               style="
                 background-color: transparent;
                 border: 1px solid #9933cc;
                 color: #9933cc;
               "
+              onclick="filterVideos('premium')"
             >
-              Estrategias
+              🚀 PREMIUM
             </button>
           </div>
 
-          <div class="grid-cards">
-            <!-- Video 1 -->
-            <div class="video-card">
-              <div class="video-container">
-                <iframe
-                  src="https://www.youtube.com/embed/dQw4w9WgXcQ"
-                  title="YouTube video player"
-                  frameborder="0"
-                  allow="
-                    accelerometer;
-                    autoplay;
-                    clipboard-write;
-                    encrypted-media;
-                    gyroscope;
-                    picture-in-picture;
-                    web-share;
-                  "
-                  allowfullscreen
-                ></iframe>
-              </div>
-              <div class="video-info">
-                <h3 class="video-title">Vivo Mensual Febrero 2026</h3>
-                <p class="video-desc">
-                  Análisis de mercado, proyección de BTC y altcoins interesantes
-                  de la semana.
-                </p>
-              </div>
-            </div>
-            <!-- Video 2 -->
-            <div class="video-card">
-              <div class="video-container">
-                <iframe
-                  src="https://www.youtube.com/embed/dQw4w9WgXcQ"
-                  title="YouTube video player"
-                  frameborder="0"
-                  allow="
-                    accelerometer;
-                    autoplay;
-                    clipboard-write;
-                    encrypted-media;
-                    gyroscope;
-                    picture-in-picture;
-                    web-share;
-                  "
-                  allowfullscreen
-                ></iframe>
-              </div>
-              <div class="video-info">
-                <h3 class="video-title">Estrategia de DCA Automático</h3>
-                <p class="video-desc">
-                  Aprende a automatizar tus compras para reducir el riesgo de
-                  volatilidad.
-                </p>
-              </div>
-            </div>
+          <div class="grid-cards" id="video-grid">
+            <!-- Videos se cargan dinámicamente -->
           </div>
         </section>
 
@@ -232,99 +195,75 @@
           >
             Tus accesos por WhatsApp
           </h2>
-          <p style="color: #666; font-size: 1.1rem; margin-bottom: 2rem">
-            Acá tenés los links directos para unirte a nuestros 3 grupos
-            exclusivos de Crypto+.
-          </p>
-
-          <div class="grid-cards" style="grid-template-columns: 1fr">
-            <div
-              class="card"
-              style="
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                border-left: 5px solid #25d366;
-              "
-            >
-              <div>
-                <h3 class="card-title" style="margin-bottom: 0.2rem">
-                  ☕ Grupo Café Crypto+
-                </h3>
-                <p style="color: #666; font-size: 0.95rem">
-                  Comunidad para charlar, compartir ideas y sacar dudas con
-                  otros miembros.
-                </p>
+          <div id="groups-content">
+              <p style="color: #666; font-size: 1.1rem; margin-bottom: 2rem">
+                Acá tenés los links directos para unirte a nuestros grupos exclusivos.
+              </p>
+    
+              <div class="grid-cards" style="grid-template-columns: 1fr">
+                <div
+                  class="card"
+                  style="
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    border-left: 5px solid #25d366;
+                  "
+                >
+                  <div>
+                    <h3 class="card-title" style="margin-bottom: 0.2rem">
+                      ☕ Grupo Café Crypto+
+                    </h3>
+                    <p style="color: #666; font-size: 0.95rem">
+                      Comunidad para charlar, compartir ideas y sacar dudas con
+                      otros miembros.
+                    </p>
+                  </div>
+                  <a
+                    href="https://chat.whatsapp.com/CjQV87soewTCbd38Vb10u6"
+                    target="_blank"
+                    class="btn-dashboard"
+                    style="
+                      background-color: #25d366;
+                      flex-shrink: 0;
+                      margin-left: 1rem;
+                    "
+                    >Unirme al Grupo</a
+                  >
+                </div>
+    
+                <div
+                  class="card"
+                  style="
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    border-left: 5px solid #9933cc;
+                  "
+                >
+                  <div>
+                    <h3 class="card-title" style="margin-bottom: 0.2rem">
+                      🎥 Grupo Stream Crypto+
+                    </h3>
+                    <p style="color: #666; font-size: 0.95rem">
+                      Canal donde avisamos cada vez que empezamos un vivo.
+                    </p>
+                  </div>
+                  <a
+                    href="https://chat.whatsapp.com/J6Oq6USu0dSKd81IngngnS"
+                    target="_blank"
+                    class="btn-dashboard"
+                    style="flex-shrink: 0; margin-left: 1rem"
+                    >Unirme al Grupo</a
+                  >
+                </div>
               </div>
-              <a
-                href="https://chat.whatsapp.com/CjQV87soewTCbd38Vb10u6?mode=gi_t"
-                target="_blank"
-                class="btn-dashboard"
-                style="
-                  background-color: #25d366;
-                  flex-shrink: 0;
-                  margin-left: 1rem;
-                "
-                >Unirme al Grupo</a
-              >
-            </div>
-
-            <div
-              class="card"
-              style="
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                border-left: 5px solid #9933cc;
-              "
-            >
-              <div>
-                <h3 class="card-title" style="margin-bottom: 0.2rem">
-                  🎥 Grupo Stream Crypto+
-                </h3>
-                <p style="color: #666; font-size: 0.95rem">
-                  Canal donde avisamos cada vez que empezamos un vivo.
-                </p>
-              </div>
-              <a
-                href="https://chat.whatsapp.com/J6Oq6USu0dSKd81IngngnS?mode=gi_t"
-                target="_blank"
-                class="btn-dashboard"
-                style="flex-shrink: 0; margin-left: 1rem"
-                >Unirme al Grupo</a
-              >
-            </div>
-
-            <div
-              class="card"
-              style="
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                border-left: 5px solid #ff4757;
-              "
-            >
-              <div>
-                <h3 class="card-title" style="margin-bottom: 0.2rem">
-                  🚨 Grupo Alertas Crypto+
-                </h3>
-                <p style="color: #666; font-size: 0.95rem">
-                  Acá te avisamos de oportunidades del mercado rápidos (solo
-                  admin).
-                </p>
-              </div>
-              <a
-                href="https://chat.whatsapp.com/Cf755ECXEVh9CBgbNNcLHb?mode=gi_t"
-                target="_blank"
-                class="btn-dashboard"
-                style="
-                  background-color: #ff4757;
-                  flex-shrink: 0;
-                  margin-left: 1rem;
-                "
-                >Unirme al Grupo</a
-              >
-            </div>
+          </div>
+          <div id="groups-locked" style="display: none; text-align: center; padding: 3rem; background: #f8f9fa; border-radius: 8px;">
+              <span style="font-size: 4rem;">🔒</span>
+              <h3 style="margin-top: 1rem;">Contenido Bloqueado</h3>
+              <p>Los grupos de WhatsApp son exclusivos para miembros <strong>PREMIUM</strong>.</p>
+              <button class="btn-dashboard" style="margin-top: 1rem;" onclick="openUpgradeModal()">Pasar a Premium</button>
           </div>
         </section>
 
@@ -341,117 +280,29 @@
           </h2>
 
           <div class="card" style="max-width: 600px">
-            <form style="display: flex; flex-direction: column; gap: 1.5rem">
+            <form id="profile-form" style="display: flex; flex-direction: column; gap: 1.2rem">
               <div>
-                <label
-                  style="
-                    display: block;
-                    color: #555;
-                    margin-bottom: 0.5rem;
-                    font-family: &quot;Fira Sans&quot;;
-                  "
-                  >Nombre Completo</label
-                >
-                <input
-                  type="text"
-                  value="Usuario Analista"
-                  style="
-                    width: 100%;
-                    padding: 0.8rem;
-                    border: 1px solid #ccc;
-                    border-radius: 4px;
-                    font-family: &quot;Fira Code&quot;;
-                  "
-                />
+                <label style="display: block; color: #555; margin-bottom: 0.3rem;">Nombre Completo</label>
+                <input type="text" id="profile-name" style="width: 100%; padding: 0.8rem; border: 1px solid #ccc; border-radius: 4px;"/>
               </div>
               <div>
-                <label
-                  style="
-                    display: block;
-                    color: #555;
-                    margin-bottom: 0.5rem;
-                    font-family: &quot;Fira Sans&quot;;
-                  "
-                  >Correo Electrónico</label
-                >
-                <input
-                  type="email"
-                  value="usuario@email.com"
-                  disabled
-                  style="
-                    width: 100%;
-                    padding: 0.8rem;
-                    border: 1px solid #eee;
-                    background-color: #f9f9f9;
-                    border-radius: 4px;
-                    font-family: &quot;Fira Code&quot;;
-                    color: #888;
-                  "
-                />
+                <label style="display: block; color: #555; margin-bottom: 0.3rem;">Correo Electrónico</label>
+                <input type="email" id="profile-email" disabled style="width: 100%; padding: 0.8rem; border: 1px solid #eee; background-color: #f9f9f9; border-radius: 4px;"/>
               </div>
 
-              <hr
-                style="border: 0; border-top: 1px solid #eee; margin: 1rem 0"
-              />
-
-              <h3
-                style="
-                  font-family: &quot;Fira Sans&quot;;
-                  font-size: 1.1rem;
-                  color: #333;
-                "
-              >
-                Cambiar Contraseña
-              </h3>
-
+              <hr style="border: 0; border-top: 1px solid #eee; margin: 0.5rem 0;"/>
+              <h3 style="font-size: 1.1rem; color: #333; margin: 0;">Cambiar Contraseña</h3>
+              
               <div>
-                <label
-                  style="
-                    display: block;
-                    color: #555;
-                    margin-bottom: 0.5rem;
-                    font-family: &quot;Fira Sans&quot;;
-                  "
-                  >Contraseña Actual</label
-                >
-                <input
-                  type="password"
-                  style="
-                    width: 100%;
-                    padding: 0.8rem;
-                    border: 1px solid #ccc;
-                    border-radius: 4px;
-                    font-family: &quot;Fira Code&quot;;
-                  "
-                />
+                <label style="display: block; color: #555; margin-bottom: 0.3rem;">Nueva Contraseña</label>
+                <input type="password" id="profile-pass" placeholder="Dejar en blanco para no cambiar" style="width: 100%; padding: 0.8rem; border: 1px solid #ccc; border-radius: 4px;"/>
               </div>
               <div>
-                <label
-                  style="
-                    display: block;
-                    color: #555;
-                    margin-bottom: 0.5rem;
-                    font-family: &quot;Fira Sans&quot;;
-                  "
-                  >Nueva Contraseña</label
-                >
-                <input
-                  type="password"
-                  style="
-                    width: 100%;
-                    padding: 0.8rem;
-                    border: 1px solid #ccc;
-                    border-radius: 4px;
-                    font-family: &quot;Fira Code&quot;;
-                  "
-                />
+                <label style="display: block; color: #555; margin-bottom: 0.3rem;">Confirmar Nueva Contraseña</label>
+                <input type="password" id="profile-pass-confirm" placeholder="Dejar en blanco para no cambiar" style="width: 100%; padding: 0.8rem; border: 1px solid #ccc; border-radius: 4px;"/>
               </div>
 
-              <button
-                type="button"
-                class="btn-dashboard"
-                onclick="alert('Datos actualizados')"
-              >
+              <button type="button" class="btn-dashboard" onclick="updateProfile()">
                 Guardar Cambios
               </button>
             </form>
@@ -460,48 +311,244 @@
       </main>
     </div>
 
+    <!-- MODAL UPGRADE -->
+    <div class="overlay-carrito" id="modalUpgrade" style="z-index: 2000">
+        <div class="carrito-contenido" style="max-width: 500px; text-align: center;">
+            <h2 style="color: #9933cc; margin-bottom: 1rem;">Elegí tu plan Premium</h2>
+            <p style="margin-bottom: 2rem; color: #666;">Selecciona el método de pago que prefieras para obtener acceso total.</p>
+            
+            <div style="display: flex; flex-direction: column; gap: 1rem;">
+                <button class="btn-dashboard" style="height: 60px; font-size: 1.1rem; background-color: #009ee3;" onclick="payWithMP()">
+                    Pagar con Mercado Pago 💳
+                </button>
+                <button class="btn-dashboard" style="height: 60px; font-size: 1.1rem; background-color: #25d366;" onclick="payWithWA()">
+                    Solicitar otros medios (WhatsApp) 💬
+                </button>
+            </div>
+            
+            <button onclick="closeUpgradeModal()" style="margin-top: 2rem; background: none; border: none; color: #888; text-decoration: underline; cursor: pointer;">Volver</button>
+        </div>
+    </div>
+
+    <!-- MODAL MERCADO PAGO CONFIRMATION -->
+    <div class="overlay-carrito" id="modalMPConfirm" style="z-index: 2100">
+        <div class="carrito-contenido" style="max-width: 450px; text-align: center;">
+            <div style="font-size: 4rem; color: #25d366; margin-bottom: 1rem;">🎯</div>
+            <h3 style="margin-bottom: 1rem;">¡Casi listo!</h3>
+            <p style="margin-bottom: 1.5rem;">Una vez realizado el pago en Mercado Pago, por favor enviá el <strong>comprobante</strong> al siguiente número para activar tu cuenta:</p>
+            <a href="https://wa.me/5491136542795?text=Hola!%20Acabo%20de%20realizar%20el%20pago%20Premium.%20Adjunto%20comprobante." target="_blank" class="btn-dashboard" style="background-color: #25d366; display: block; text-decoration: none;">
+                Enviar comprobante por WhatsApp
+            </a>
+            <button onclick="document.getElementById('modalMPConfirm').classList.remove('active')" style="margin-top: 1rem; background: none; border: none; color: #888; cursor: pointer;">Cerrar</button>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
     <script>
-      // Navegación Básica Spa-Like
+      // Cargar Datos del Usuario al iniciar
+      const userEmail = localStorage.getItem("userEmail");
+      const users = JSON.parse(localStorage.getItem("users") || "[]");
+      let currentUser = users.find(u => u.email === userEmail);
+
+      function initPanel() {
+        if (!currentUser) {
+            window.location.href = "index.html";
+            return;
+        }
+
+        const isPremium = currentUser.isPremium;
+        
+        // UI Header
+        document.getElementById("user-name-display").textContent = currentUser.name;
+        document.getElementById("user-avatar").textContent = currentUser.name.charAt(0).toUpperCase();
+        document.getElementById("user-status").textContent = isPremium ? "✅ Plan Premium" : "🆓 Plan Free";
+        document.getElementById("user-status").className = isPremium ? "badge-active" : "badge-free";
+
+        // UI Home
+        document.getElementById("welcome-msg").textContent = `¡Hola ${currentUser.name}, bienvenido al Panel!`;
+        document.getElementById("subscription-msg").textContent = isPremium 
+            ? "Tu suscripción PREMIUM está activa. Disfrutá de todo el contenido." 
+            : "Estás en el plan FREE. Tenés acceso limitado a videos gratuitos.";
+        
+        document.getElementById("premium-upgrade-banner").style.display = isPremium ? "none" : "flex";
+
+        // UI Groups
+        if (isPremium) {
+            document.getElementById("groups-content").style.display = "block";
+            document.getElementById("groups-locked").style.display = "none";
+        } else {
+            document.getElementById("groups-content").style.display = "none";
+            document.getElementById("groups-locked").style.display = "block";
+        }
+
+        // Profile
+        document.getElementById("profile-name").value = currentUser.name;
+        document.getElementById("profile-email").value = currentUser.email;
+
+        // Cargar Videos
+        renderVideos();
+      }
+
+      function renderVideos(filter = 'all') {
+        const videos = JSON.parse(localStorage.getItem("videos") || "[]");
+        const grid = document.getElementById("video-grid");
+        grid.innerHTML = "";
+
+        const isPremium = currentUser.isPremium;
+
+        videos.forEach(v => {
+            // Lógica de filtrado
+            if (filter === 'free' && v.isPremium) return;
+            if (filter === 'premium' && !v.isPremium) return;
+
+            const card = document.createElement("div");
+            card.className = "video-card";
+            
+            // Si el video es premium y el usuario no, mostramos bloqueo
+            const isLocked = v.isPremium && !isPremium;
+
+            card.innerHTML = `
+              <div class="video-container" style="position: relative;">
+                ${isLocked ? `
+                    <div style="position: absolute; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.8); z-index: 10; display:flex; flex-direction:column; justify-content:center; align-items:center; color:white;">
+                        <span style="font-size: 2rem;">🔒</span>
+                        <p style="font-size: 0.8rem; margin-top: 0.5rem;">Contenido PREMIUM</p>
+                        <button onclick="openUpgradeModal()" style="padding:0.3rem 0.6rem; font-size: 0.7rem; background:#9933cc; border:none; color:white; border-radius:4px; margin-top:0.5rem; cursor:pointer;">Mejorar Plan</button>
+                    </div>
+                ` : `
+                    <iframe
+                      src="${v.link}"
+                      title="YouTube video player"
+                      frameborder="0"
+                      allowfullscreen
+                    ></iframe>
+                `}
+              </div>
+              <div class="video-info">
+                <h3 class="video-title">${v.title} ${v.isPremium ? '<span style="color: #ffc107; font-size: 0.8rem;">(Premium)</span>' : ''}</h3>
+                <p class="video-desc">${v.detail}</p>
+              </div>
+            `;
+            grid.appendChild(card);
+        });
+      }
+
+      function filterVideos(type) {
+        document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+        event.currentTarget.classList.add('active');
+        renderVideos(type);
+      }
+
       function switchSection(sectionName) {
-        // Esconder todas las secciones
         document.querySelectorAll(".dashboard-section").forEach((sec) => {
           sec.classList.remove("active");
         });
-        // Remover 'active' de todos los nav items
         document.querySelectorAll(".nav-item").forEach((nav) => {
           nav.classList.remove("active");
         });
 
-        // Mostrar la seleccionada
-        document
-          .getElementById("section-" + sectionName)
-          .classList.add("active");
+        document.getElementById("section-" + sectionName).classList.add("active");
+        
+        // Find the nav item that corresponds to the section
+        const navItems = document.querySelectorAll(".nav-item");
+        navItems.forEach(item => {
+            if (item.getAttribute('onclick').includes(sectionName)) {
+                item.classList.add('active');
+            }
+        });
 
-        // Marcar nav item como activo (por coincidencia de onclick string)
-        event.currentTarget.classList.add("active");
-
-        // Actualizar Título
         const titleMap = {
           home: "Bienvenido",
           videos: "Videos",
           grupos: "Grupos de WhatsApp",
           perfil: "Mi Perfil",
         };
-        document.getElementById("page-title").innerText =
-          titleMap[sectionName] || "";
+        document.getElementById("page-title").innerText = titleMap[sectionName] || "";
+
+        // Cerrar sidebar en móvil al navegar
+        if (window.innerWidth <= 992) {
+            toggleSidebar();
+        }
       }
 
-      // Cierre de Sesión
+      function updateProfile() {
+        const newName = document.getElementById("profile-name").value;
+        const newPass = document.getElementById("profile-pass").value;
+        const confirmPass = document.getElementById("profile-pass-confirm").value;
+
+        if (newPass && newPass !== confirmPass) {
+          alert("Las contraseñas no coinciden.");
+          return;
+        }
+
+        const users = JSON.parse(localStorage.getItem("users") || "[]");
+        const idx = users.findIndex(u => u.email === currentUser.email);
+
+        if (idx !== -1) {
+          users[idx].name = newName;
+          if (newPass) {
+            users[idx].password = newPass;
+          }
+          localStorage.setItem("users", JSON.stringify(users));
+          
+          // Actualizar datos en memoria
+          currentUser.name = newName;
+          localStorage.setItem("userName", newName);
+          
+          alert("¡Perfil actualizado con éxito!");
+          
+          // Limpiar campos de contraseña
+          document.getElementById("profile-pass").value = "";
+          document.getElementById("profile-pass-confirm").value = "";
+          
+          // Refrescar UI (nombre en el dashboard, avatar, etc)
+          initPanel();
+        }
+      }
+
+      function toggleSidebar() {
+          const sidebar = document.getElementById("sidebar");
+          const overlay = document.getElementById("sidebar-overlay");
+          sidebar.classList.toggle("open");
+          overlay.classList.toggle("active");
+      }
+
+      function openUpgradeModal() {
+        document.getElementById("modalUpgrade").classList.add("active");
+      }
+
+      function closeUpgradeModal() {
+        document.getElementById("modalUpgrade").classList.remove("active");
+      }
+
+      function payWithMP() {
+        const MP_LINK = "https://www.mercadopago.com.ar/subscriptions/checkout?preapproval_plan_id=2c93808490c3cf9e0190eafba9930b25";
+        closeUpgradeModal();
+        
+        // Guardar que el usuario intentó pagar (isPending)
+        currentUser.isPending = true;
+        const users = JSON.parse(localStorage.getItem("users") || "[]");
+        const idx = users.findIndex(u => u.email === currentUser.email);
+        users[idx] = currentUser;
+        localStorage.setItem("users", JSON.stringify(users));
+
+        window.open(MP_LINK, '_blank');
+        document.getElementById("modalMPConfirm").classList.add("active");
+      }
+
+      function payWithWA() {
+        window.open("https://wa.me/5491136542795?text=Hola!%20Quiero%20acceder%20al%20plan%20Premium%20por%20otros%20medios.", '_blank');
+        closeUpgradeModal();
+      }
+
       function logout() {
         localStorage.removeItem("isLoggedIn");
         window.location.href = "index.html";
       }
 
-      // Verificación simulada
-      if (localStorage.getItem("isLoggedIn") !== "true") {
-        // alert('Debes iniciar sesión primero.');
-        // window.location.href = 'auth.html'; // Descomentado en prod
-      }
+      initPanel();
     </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="app.js"></script>
   </body>
 </html>
