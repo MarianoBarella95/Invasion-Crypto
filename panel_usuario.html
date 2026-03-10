@@ -454,6 +454,28 @@
               const card = document.createElement("div");
               card.className = "video-card";
               
+              // Normalizar URL de YouTube al formato embed limpio
+              function getEmbedUrl(rawUrl) {
+                if (!rawUrl) return null;
+                try {
+                  // Si ya es un embed URL, extraer solo el video ID para limpiar params raros
+                  const embedMatch = rawUrl.match(/youtube\.com\/embed\/([a-zA-Z0-9_-]+)/);
+                  if (embedMatch) return `https://www.youtube.com/embed/${embedMatch[1]}`;
+                  
+                  // Convertir watch?v= al formato embed
+                  const watchMatch = rawUrl.match(/[?&]v=([a-zA-Z0-9_-]+)/);
+                  if (watchMatch) return `https://www.youtube.com/embed/${watchMatch[1]}`;
+                  
+                  // Convertir youtu.be/ID al formato embed
+                  const shortMatch = rawUrl.match(/youtu\.be\/([a-zA-Z0-9_-]+)/);
+                  if (shortMatch) return `https://www.youtube.com/embed/${shortMatch[1]}`;
+                  
+                  return rawUrl; // Devolver tal cual si no se reconoce el formato
+                } catch(e) { return rawUrl; }
+              }
+
+              const embedUrl = getEmbedUrl(v.link);
+              
               // Backend usa 'categoria' para 'free'/'premium'
               const isLocked = v.categoria === 'premium' && !isPremium;
 
@@ -467,7 +489,7 @@
                       </div>
                   ` : `
                       <iframe
-                        src="${v.link}"
+                        src="${embedUrl}"
                         title="${v.titulo}"
                         frameborder="0"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
