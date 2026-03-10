@@ -51,22 +51,22 @@
         </div>
 
         <!-- Login Form -->
-        <form id="LoginForm" class="auth-form active">
+        <form id="loginForm" class="auth-form active">
           <h2 class="auth-title">Iniciar Sesión</h2>
           <div class="input-group">
-            <label for="login-email">Email</label>
+            <label for="email">Email</label>
             <input
               type="email"
-              id="login-email"
+              id="email"
               required
               placeholder="tu@email.com"
             />
           </div>
           <div class="input-group">
-            <label for="login-password">Contraseña</label>
+            <label for="password">Contraseña</label>
             <input
               type="password"
-              id="login-password"
+              id="password"
               required
               placeholder="********"
             />
@@ -75,40 +75,40 @@
             Ingresar
           </button>
           <div class="auth-footer">
-            <a href="#" class="forgot-password">Olvidé mi contraseña</a>
+            <a href="#" id="linkToForgotPassword" class="forgot-password">Olvidé mi contraseña</a>
           </div>
         </form>
 
         <!-- Register Form -->
-        <form id="RegisterForm" class="auth-form">
+        <form id="registerForm" class="auth-form">
           <h2 class="auth-title">Crear Cuenta</h2>
           <div class="input-group">
-            <label for="reg-name">Nombre</label>
-            <input type="text" id="reg-name" required placeholder="Tu Nombre" />
+            <label for="regName">Nombre</label>
+            <input type="text" id="regName" required placeholder="Tu Nombre" />
           </div>
           <div class="input-group">
-            <label for="reg-email">Email</label>
+            <label for="regEmail">Email</label>
             <input
               type="email"
-              id="reg-email"
+              id="regEmail"
               required
               placeholder="tu@email.com"
             />
           </div>
           <div class="input-group">
-            <label for="reg-password">Contraseña</label>
+            <label for="regPassword">Contraseña</label>
             <input
               type="password"
-              id="reg-password"
+              id="regPassword"
               required
               placeholder="********"
             />
           </div>
           <div class="input-group">
-            <label for="reg-confirm">Confirmar Contraseña</label>
+            <label for="regConfirm">Confirmar Contraseña</label>
             <input
               type="password"
-              id="reg-confirm"
+              id="regConfirm"
               required
               placeholder="********"
             />
@@ -127,65 +127,11 @@
 
         document.querySelectorAll(".auth-form").forEach((f) => f.classList.remove("active"));
         if (tab === "login") {
-          document.getElementById("LoginForm").classList.add("active");
+          document.getElementById("loginForm").classList.add("active");
         } else {
-          document.getElementById("RegisterForm").classList.add("active");
+          document.getElementById("registerForm").classList.add("active");
         }
       }
-
-      // REGISTER LOGIC
-      document.getElementById("RegisterForm").addEventListener("submit", function (e) {
-        e.preventDefault();
-        const name = document.getElementById("reg-name").value;
-        const email = document.getElementById("reg-email").value;
-        const pass = document.getElementById("reg-password").value;
-        const confirm = document.getElementById("reg-confirm").value;
-
-        if (pass !== confirm) {
-          alert("Las contraseñas no coinciden.");
-          return;
-        }
-
-        let users = JSON.parse(localStorage.getItem("users") || "[]");
-        if (users.find(u => u.email === email)) {
-          alert("El usuario ya existe.");
-          return;
-        }
-
-        users.push({
-          name,
-          email,
-          password: pass,
-          isPremium: false,
-          isPending: false
-        });
-        localStorage.setItem("users", JSON.stringify(users));
-
-        alert("Registro exitoso. Ahora podés iniciar sesión.");
-        switchTab('login');
-        document.getElementById("login-email").value = email;
-      });
-
-      // LOGIN LOGIC
-      document.getElementById("LoginForm").addEventListener("submit", function (e) {
-        e.preventDefault();
-        const email = document.getElementById("login-email").value;
-        const password = document.getElementById("login-password").value;
-
-        const users = JSON.parse(localStorage.getItem("users") || "[]");
-        const user = users.find(u => u.email === email && u.password === password);
-
-        if (user) {
-          localStorage.setItem("isLoggedIn", "true");
-          localStorage.setItem("userEmail", email);
-          localStorage.setItem("userName", user.name);
-          localStorage.setItem("isPremium", user.isPremium);
-          
-          window.location.href = "panel_usuario.html";
-        } else {
-          alert("Email o contraseña incorrectos.");
-        }
-      });
 
       // Check for mode in URL
       const params = new URLSearchParams(window.location.search);
@@ -193,5 +139,7 @@
           switchTab('register');
       }
     </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="app.js"></script>
   </body>
 </html>

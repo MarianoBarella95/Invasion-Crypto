@@ -111,7 +111,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (response.ok) {
           localStorage.setItem("isLoggedIn", "true");
-          localStorage.setItem("authToken", data.token || data.accessToken);
+          // Guardar cualquier variante de token que devuelva el backend
+          const token = data.token || data.accessToken || data.jwt;
+          localStorage.setItem("authToken", token);
           localStorage.setItem("userEmail", email);
           localStorage.setItem("userName", data.user ? data.user.name : "Usuario");
           localStorage.setItem("userRole", data.user ? data.user.role : "user");
@@ -159,7 +161,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       });
     }
-  }
   }
 
   // ELEMENTOS DEL MODAL FORGOT PASSWORD
@@ -279,6 +280,13 @@ document.addEventListener('DOMContentLoaded', () => {
       const email = document.getElementById("regEmail").value;
       const password = document.getElementById("regPassword").value;
 
+      const confirm = document.getElementById("regConfirm") ? document.getElementById("regConfirm").value : "";
+
+      if (confirm && password !== confirm) {
+        showToast("Las contraseñas no coinciden.");
+        return;
+      }
+
       if (name && email && password) {
         try {
           const response = await apiFetch("/api/auth/register", {
@@ -316,22 +324,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // INICIALIZACIÓN DE DATOS (MOCK)
-  const initData = () => {
-    if (!localStorage.getItem("users")) {
-      localStorage.setItem("users", JSON.stringify([
-        { name: "Admin", email: "admin@invasion.com", password: "admin", isAdmin: true },
-        { name: "Usuario Prueba", email: "user@test.com", password: "user", isPremium: false, isPending: false }
-      ]));
-    }
-    if (!localStorage.getItem("videos")) {
-      localStorage.setItem("videos", JSON.stringify([
-        { title: "Introducción a Bitcoin", detail: "Conceptos básicos para empezar.", link: "https://www.youtube.com/embed/dQw4w9WgXcQ", isPremium: false },
-        { title: "Trading Avanzado", detail: "Estrategias premium para expertos.", link: "https://www.youtube.com/embed/dQw4w9WgXcQ", isPremium: true }
-      ]));
-    }
-  };
-  initData();
+  // NOTA: Se ha removido la inicialización de datos de prueba local (Mock) para favorecer la API real.
 
   // ELEMENTOS DEL MODAL CARRITO (LEGACY - Mantenido por si se revierte)
   const overlay = document.getElementById("overlayCarrito");
@@ -449,37 +442,6 @@ if (typeof Swiper !== 'undefined') {
   });
 }
 
-// TOAST NOTIFICATION FUNCTION
-function showToast(message, duration = 3000) {
-  let container = document.getElementById('toast-container');
-  if (!container) {
-    container = document.createElement('div');
-    container.id = 'toast-container';
-    container.className = 'toast-container';
-    document.body.appendChild(container);
-  }
-
-  const toast = document.createElement('div');
-  toast.className = 'toast';
-  toast.textContent = message;
-
-  container.appendChild(toast);
-
-  // Trigger reflow
-  void toast.offsetWidth;
-
-  toast.classList.add('show');
-
-  setTimeout(() => {
-    toast.classList.remove('show');
-    setTimeout(() => {
-      if (container.contains(toast)) {
-        container.removeChild(toast);
-      }
-    }, 300); // Wait for transition
-  }, duration);
-}
-
 // ANIMACIÓN DE LOGOS FLOTANTES (GSAP)
 function initLogoAnimation() {
   const banners = document.querySelectorAll('.banner, .banner-secondary');
@@ -517,7 +479,34 @@ function initLogoAnimation() {
   });
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    initLogoAnimation();
-});
+// TOAST NOTIFICATION FUNCTION (GLOBAL)
+function showToast(message, duration = 3000) {
+  let container = document.getElementById('toast-container');
+  if (!container) {
+    container = document.createElement('div');
+    container.id = 'toast-container';
+    container.className = 'toast-container';
+    document.body.appendChild(container);
+  }
+
+  const toast = document.createElement('div');
+  toast.className = 'toast';
+  toast.textContent = message;
+
+  container.appendChild(toast);
+
+  // Trigger reflow
+  void toast.offsetWidth;
+
+  toast.classList.add('show');
+
+  setTimeout(() => {
+    toast.classList.remove('show');
+    setTimeout(() => {
+      if (container.contains(toast)) {
+        container.removeChild(toast);
+      }
+    }, 300); // Wait for transition
+  }, duration);
+}
 
