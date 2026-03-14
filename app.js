@@ -8,18 +8,52 @@ var _memToken = null;
 async function apiFetch(endpoint, options = {}) {
   // Leer token de localStorage primero, si no hay usar el de memoria
   const token = localStorage.getItem("authToken") || _memToken;
-  console.log(`[apiFetch] ${endpoint} | token: ${token ? token.substring(0,30)+'...' : 'NULL'} | memToken: ${_memToken ? _memToken.substring(0,30)+'...' : 'NULL'}`);
+  console.log(`[apiFetch] ${endpoint} | token: ${token ? token.substring(0,30)+'...' : 'NULL'}`);
+  
   const headers = {
     "Content-Type": "application/json",
     ...options.headers,
   };
+  
   if (token) {
     headers["Authorization"] = `Bearer ${token}`;
   }
-  return fetch(`${API_URL}${endpoint}`, {
-    ...options,
-    headers,
-  });
+
+  try {
+    const response = await fetch(`${API_URL}${endpoint}`, {
+      ...options,
+      headers,
+    });
+
+    // Detectar Token Expired / sesión inválida (401 Unauthorized)
+    if (response.status === 401) {
+      console.warn("Sesión expirada o token inválido (401).");
+      
+      // Solo redirigir si no estamos ya en el index o en el login
+      const isPublicPage = window.location.pathname.includes("index.html") || 
+                           window.location.pathname.includes("auth.html") ||
+                           window.location.pathname.includes("admin_login.html");
+      
+      if (!isPublicPage) {
+        localStorage.removeItem("isLoggedIn");
+        localStorage.removeItem("authToken");
+        localStorage.removeItem("userRole");
+        
+        // El alert bloquea la ejecución, permitiendo que el usuario vea el mensaje
+        alert("Tu sesión ha expirado. Por favor, iniciá sesión de nuevo.");
+        window.location.href = "index.html";
+      }
+    }
+
+    return response;
+  } catch (error) {
+    console.error("Error en apiFetch:", error);
+    // Si hay un error de conexión, mostrar un toast o mensaje
+    if (typeof showToast === 'function') {
+      showToast("Error de conexión con el servidor.");
+    }
+    throw error;
+  }
 }
 
 document.addEventListener('DOMContentLoaded', () => {

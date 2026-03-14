@@ -117,15 +117,10 @@
 
         <!-- SECTION: USUARIOS -->
         <section id="section-usuarios" class="dashboard-section">
-          <h2
-            style="
-              font-family: &quot;Fira Sans&quot;;
-              margin-bottom: 1rem;
-              color: #333;
-            "
-          >
-            Gestión de Usuarios
-          </h2>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+            <h2 style="font-family: &quot;Fira Sans&quot;; color: #333; margin: 0;">Gestión de Usuarios</h2>
+            <button class="btn-dashboard" onclick="exportUsersCSV()" style="background-color: #28a745;">📥 Exportar Backup (CSV)</button>
+          </div>
 
           <div class="card" style="padding: 0; overflow-x: auto">
             <table class="data-table">
@@ -324,6 +319,7 @@
                     <td>
                         <button class="btn-success" onclick="approveUser('${u._id}')">Aprobar ✅</button>
                         <button class="btn-danger" style="margin-left:5px" onclick="updateUserStatus('${u._id}', 'suspendido')">Suspender ❌</button>
+                        <button class="btn-danger" style="margin-left:5px; background-color: #000;" onclick="deleteUser('${u._id}')">Eliminar 🗑️</button>
                     </td>
                 `;
                 table.appendChild(tr);
@@ -360,6 +356,7 @@
                     </td>
                     <td>
                         ${!isPremium ? `<button class="btn-dashboard" style="font-size:0.7rem; padding: 0.3rem 0.6rem;" onclick="approveUser('${u._id}')">Hacer Premium</button>` : `<button class="btn-danger" style="font-size:0.7rem; padding: 0.3rem 0.6rem;" onclick="updateUserStatus('${u._id}', 'denegado')">Quitar Premium</button>`}
+                        <button class="btn-danger" style="font-size:0.7rem; padding: 0.3rem 0.6rem; margin-left: 5px; background-color: #000;" onclick="deleteUser('${u._id}')">Eliminar</button>
                     </td>
                 `;
                 table.appendChild(tr);
@@ -427,6 +424,26 @@
           }
       }
 
+      async function deleteUser(id) {
+          if (confirm("¿Seguro que querés eliminar este usuario COMPLETAMENTE del sistema? Esto permitirá que se vuelva a registrar con el mismo email.")) {
+              try {
+                const response = await apiFetch(`/api/users/${id}`, {
+                  method: "DELETE"
+                });
+
+                if (response.ok) {
+                  showToast("Usuario eliminado definitivamente.");
+                  initAdmin(); // Recargar todas las tablas
+                } else {
+                  const data = await response.json();
+                  showToast("Error: " + data.message);
+                }
+              } catch (error) {
+                console.error("Error eliminando usuario:", error);
+              }
+          }
+      }
+
       async function deleteVideo(id) {
           if (confirm("¿Seguro que querés eliminar este video?")) {
               try {
@@ -443,6 +460,50 @@
               } catch (error) {
                 console.error("Error eliminando video:", error);
               }
+          }
+      }
+
+      async function exportUsersCSV() {
+          try {
+              const response = await apiFetch("/api/users");
+              const data = await response.json();
+              
+              if (!response.ok) throw new Error(data.message || "Error al cargar usuarios");
+              const users = data.users || [];
+              
+              if (users.length === 0) {
+                  showToast("No hay usuarios para exportar.");
+                  return;
+              }
+              
+              // Definir cabeceras
+              let csvContent = "\uFEFF"; // BOM para Excel
+              csvContent += "Nombre,Email,Estado,Rol\n";
+              
+              // Agregar filas
+              users.forEach(u => {
+                  const name = (u.name || "").replace(/,/g, " ");
+                  const email = (u.email || "").replace(/,/g, " ");
+                  const estado = (u.estado || "").replace(/,/g, " ");
+                  const role = (u.role || "").replace(/,/g, " ");
+                  csvContent += `${name},${email},${estado},${role}\n`;
+              });
+              
+              // Crear blob y descargar
+              const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+              const url = URL.createObjectURL(blob);
+              const link = document.createElement("a");
+              link.setAttribute("href", url);
+              link.setAttribute("download", `usuarios_invasion_crypto_${new Date().toISOString().split('T')[0]}.csv`);
+              link.style.visibility = 'hidden';
+              document.body.appendChild(link);
+              link.click();
+              document.body.removeChild(link);
+              
+              showToast("Backup (CSV) generado correctamente.");
+          } catch (error) {
+              console.error("Error al exportar CSV:", error);
+              showToast("Error al generar el backup.");
           }
       }
 
