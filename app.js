@@ -253,7 +253,21 @@ document.addEventListener('DOMContentLoaded', () => {
           
           // Guardar estado (Premium/Free)
           const stateRaw = searchDeep(data, ["estado", "status", "state"]) || (jwtPayload ? (jwtPayload.estado || jwtPayload.status) : "denegado");
-          localStorage.setItem("userStatus", stateRaw);
+          const state = String(stateRaw).toLowerCase();
+          localStorage.setItem("userStatus", state);
+          
+          // Bloquear si está suspendido
+          if (state === "suspendido") {
+            showToast("Cuenta suspendida. Por favor, contactate con soporte.");
+            // Limpiar todo para que no quede rastro de login parcial
+            localStorage.removeItem("isLoggedIn");
+            localStorage.removeItem("authToken");
+            localStorage.removeItem("userRole");
+            localStorage.removeItem("userStatus");
+            localStorage.removeItem("userName");
+            localStorage.removeItem("userEmail");
+            return; // Detener flujo
+          }
           
           showToast("Login exitoso. Redirigiendo...");
 
