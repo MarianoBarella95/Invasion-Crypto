@@ -355,6 +355,7 @@
                       </span>
                     </td>
                     <td>
+                        ${u.estado === 'suspendido' ? `<button class="btn-success" style="font-size:0.7rem; padding: 0.3rem 0.6rem; margin-right: 5px;" onclick="updateUserStatus('${u._id}', 'denegado')">Habilitar 👋</button>` : ''}
                         ${!isPremium ? `<button class="btn-dashboard" style="font-size:0.7rem; padding: 0.3rem 0.6rem;" onclick="approveUser('${u._id}')">Hacer Premium</button>` : `<button class="btn-danger" style="font-size:0.7rem; padding: 0.3rem 0.6rem;" onclick="updateUserStatus('${u._id}', 'denegado')">Quitar Premium</button>`}
                         <button class="btn-danger" style="font-size:0.7rem; padding: 0.3rem 0.6rem; margin-left: 5px; background-color: #000;" onclick="deleteUser('${u._id}')">Eliminar</button>
                     </td>
