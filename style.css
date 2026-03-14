@@ -67,7 +67,16 @@ body {
 }
 
 .banner {
-    display: none;
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 250px;
+    height: 100vh;
+    background-color: #9933CC;
+    z-index: -1;
+    overflow: hidden;
+    display: block; /* Volver a mostrar */
+    pointer-events: none;
 }
 
 .banner video {
@@ -76,7 +85,9 @@ body {
     left: 50%;
     transform: translate(-50%, -50%);
     width: 100%;
-    height: auto;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.2; /* Subtly in the background */
 }
 
 .logo {
@@ -252,7 +263,16 @@ body {
 }
 
 .banner-secondary {
-    display: none;
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 250px;
+    height: 100vh;
+    background-color: #9933CC;
+    z-index: -1;
+    overflow: hidden;
+    display: block; /* Volver a mostrar */
+    pointer-events: none;
 }
 
 .banner-secondary video {
@@ -261,7 +281,9 @@ body {
     left: 50%;
     transform: translate(-50%, -50%);
     width: 100%;
-    height: auto;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.2;
 }
 
 .nav-link-secondary {

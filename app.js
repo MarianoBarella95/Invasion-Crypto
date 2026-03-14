@@ -568,6 +568,11 @@ document.addEventListener('DOMContentLoaded', () => {
       contenedor.innerHTML = '<p class="hero-p-secondary">¡Tu carrito está <span style="font-weight: bolder;">vacío</span>, hacé click en "AGREGAR AL CARRITO" dentro de la sección <a href="crypto_plus.html" style=color: #9933CC;>Crypto+</a> para <span style="font-weight: bolder;">llenarlo</span>!</p>';
     }
   }
+
+  // Inicializar animaciones si existen banners
+  if (typeof initLogoAnimation === 'function') {
+    initLogoAnimation();
+  }
 });
 
 
