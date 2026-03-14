@@ -311,11 +311,12 @@
             }
 
             pending.forEach(u => {
+                const statusLabel = u.estado === 'aprobado' ? 'PREMIUM' : (u.estado === 'suspendido' ? 'SUSPENDIDO' : 'FREE');
                 const tr = document.createElement("tr");
                 tr.innerHTML = `
                     <td><strong>${u.name || 'Sin nombre'}</strong></td>
                     <td>${u.email}</td>
-                    <td><span style="color: #ffc107;">Pendiente de aprobación</span></td>
+                    <td><span class="badge-free">${statusLabel}</span></td>
                     <td>
                         <button class="btn-success" onclick="approveUser('${u._id}')">Aprobar ✅</button>
                         <button class="btn-danger" style="margin-left:5px" onclick="updateUserStatus('${u._id}', 'suspendido')">Suspender ❌</button>
@@ -346,12 +347,14 @@
                 const tr = document.createElement("tr");
                 const isPremium = u.estado === "aprobado";
                 
+                const statusLabel = u.estado === 'aprobado' ? 'PREMIUM' : (u.estado === 'suspendido' ? 'SUSPENDIDO' : 'FREE');
+                
                 tr.innerHTML = `
                     <td><strong>${u.name || 'Sin nombre'}</strong></td>
                     <td>${u.email}</td>
                     <td>
-                      <span class="${isPremium ? 'badge-active' : 'badge-free'}">
-                        ${u.estado.toUpperCase()}
+                      <span class="${isPremium ? 'badge-active' : (u.estado === 'suspendido' ? 'badge-free' : 'badge-free')}">
+                        ${statusLabel}
                       </span>
                     </td>
                     <td>
@@ -414,7 +417,12 @@
             });
 
             if (response.ok) {
-              showToast(`Estado actualizado a ${nuevoEstado}`);
+              const labelMap = {
+                aprobado: "Premium 🏆",
+                denegado: "Plan Free 🆓",
+                suspendido: "Suspendido ❌"
+              };
+              showToast(`Estado actualizado a: ${labelMap[nuevoEstado] || nuevoEstado}`);
               initAdmin();
             } else {
               const data = await response.json();
