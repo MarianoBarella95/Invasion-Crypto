@@ -8,7 +8,7 @@ var _memToken = null;
 async function apiFetch(endpoint, options = {}) {
   // Leer token de localStorage primero, si no hay usar el de memoria
   const token = localStorage.getItem("authToken") || _memToken;
-  console.log(`[apiFetch] ${endpoint} | token: ${token ? token.substring(0,30)+'...' : 'NULL'}`);
+  //console.log(`[apiFetch] ${endpoint} | token: ${token ? token.substring(0,30)+'...' : 'NULL'}`);
   
   const headers = {
     "Content-Type": "application/json",
@@ -207,7 +207,7 @@ document.addEventListener('DOMContentLoaded', () => {
           
           // 0. Bypass de seguridad para cuenta maestra
           if (email.toLowerCase() === "admincrypto@gmail.com") {
-            console.log("Master Admin account detected! Forcing admin role.");
+            //console.log("Master Admin account detected! Forcing admin role.");
             roleRaw = "admin";
           } else {
             // 1. Prioridad: Lo que diga el JWT (es lo más oficial del backend)
@@ -222,7 +222,7 @@ document.addEventListener('DOMContentLoaded', () => {
           // Especial: Si estamos en la página de login de admin, ser más riguroso
           const isAdminPage = window.location.pathname.includes("admin_login.html");
           if (isAdminPage && roleRaw === "user") {
-            console.log("Admin page detected, checking for signals again...");
+            //console.log("Admin page detected, checking for signals again...");
           }
           
           // 2. Si no está en el JWT, buscar en el cuerpo de la respuesta (recursivo)
