@@ -6,7 +6,8 @@
   align-items: center;
   min-height: 100vh;
   background-color: #f2f2f2;
-  padding-top: 4rem; /* Para compensar el header fixed */
+  padding-top: 4rem;
+  /* Para compensar el header fixed */
   background-image: url("img/logos/Favicon.png");
   background-repeat: no-repeat;
   background-position: center;
@@ -14,13 +15,7 @@
   background-blend-mode: overlay;
 }
 
-.construction-banner ~ .header {
-    top: 36px !important;
-}
 
-.construction-banner ~ .auth-container {
-    margin-top: 36px;
-}
 
 .header {
   grid-column: 1 / 3;
